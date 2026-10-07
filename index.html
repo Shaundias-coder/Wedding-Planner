@@ -110,8 +110,8 @@ body:not(.editor) .mutate-only{display:none!important}body:not(.editor) #n1,body
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 // ===== Shared website configuration =====
-const SUPABASE_URL='PASTE_SUPABASE_PROJECT_URL';
-const SUPABASE_ANON_KEY='PASTE_SUPABASE_PUBLISHABLE_KEY';
+const SUPABASE_URL='https://vatplngxkwsngliveikm.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_vec8fuFPIeOkKEsQnkoyAQ_geISQmYV';
 let SB=null,SESSION=null,CAN_EDIT=false,IS_ADMIN=false,realtime=null;
 const SUPABASE_READY=()=>typeof window.supabase!=='undefined' && SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PASTE_') && !SUPABASE_ANON_KEY.includes('PASTE_');
 const showAuth=(on=true)=>$('#authModal').classList.toggle('on',on);
