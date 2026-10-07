@@ -299,7 +299,7 @@ async function revokeEditor(id){
 }
 const ALL=['Roce','Nuptials','Reception'],EVO=[...ALL,'General'],EV={Roce:['Roce'],Wedding:['Nuptials','Reception']};
 const L={Roce:'Roce',Nuptials:'Nuptials (Church)',Reception:'Reception (Hall)',General:'General'};
-const SIDES=["Dad's","Mom's","Brother's","Groom's","Bride's","Mutual"],RS=['Pending','Attending','Declined'];
+const SIDES=["Dad's","Mom's","Steeve's","Shaun's","Sandriya's","Mutual"],RS=['Pending','Attending','Declined'];
 const sel=(k,l,o,e)=>({k,l,t:'sel',o,e}),txt=(k,l)=>({k,l,t:'text'}),num=(k,l,e)=>({k,l,t:'num',e});
 const S={
 guests:{t:'Guests & RSVP',f:[]},itin:{t:'Itinerary',f:[   sel('ev','Event',EVO),   txt('time','Time'),   txt('what','Activity / Description'),   txt('where','Location / Venue') ]},
