@@ -3,19 +3,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Wedding Planner · Roce & Wedding</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Playfair+Display:wght@500;700&family=Great+Vibes&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-/* Shaun & Sandriya Home Hero Background */
-.hero2 {
-  background:
-    linear-gradient(
-      rgba(0,0,0,0.45),
-      rgba(0,0,0,0.65)
-    ),
-    url('./wedding-bg.jpg') center center / cover no-repeat !important;
-
-  min-height: 420px;
-  position: relative;
-  overflow: hidden;
-}
 <style>
 :root{color-scheme:dark;--bg:#09090a;--card:#141416;--card2:#1b1b1e;--ink:#f2f2f3;--mut:#8d8d95;--line:#27272b;--gold:#d4af6a;--ok:#4ade80;--warn:#fb923c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -112,6 +99,18 @@ body{font-feature-settings:'tnum';letter-spacing:.005em}
 .authbtn{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 11px;border-radius:10px;font:600 12px Inter;cursor:pointer}.authbtn.primary{background:linear-gradient(135deg,#f0d9a0,#b98a3e);color:#111;border-color:transparent}.authbtn.danger{color:var(--warn)}
 .authmodal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}.authmodal.on{display:flex}.authbox{width:min(420px,100%);background:#111216;border:1px solid rgba(212,175,106,.35);border-radius:20px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.5)}.authbox h3{margin:0 0 8px;color:var(--gold);font:700 26px 'Playfair Display',Georgia,serif}.authbox p{font-size:12px;color:var(--mut);margin:0 0 14px}.authbox label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--mut);margin:9px 0}.authbox input{width:100%}.authactions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.accesslist{max-height:230px;overflow:auto;margin-top:12px;border-top:1px solid var(--line)}.accessrow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}.accessrow span{overflow:hidden;text-overflow:ellipsis}.setupnote{font-size:12px;color:var(--warn);padding:8px 10px;border:1px dashed rgba(251,146,60,.4);border-radius:12px;margin:7px 0}
 body:not(.editor) .mutate-only{display:none!important}body:not(.editor) #n1,body:not(.editor) #n2,body:not(.editor) #dt,body:not(.editor) #cur{pointer-events:none;opacity:.85}
+/* Shaun & Sandriya Home Hero Background */
+.hero2 {
+  background:
+    linear-gradient(
+      rgba(0,0,0,0.45),
+      rgba(0,0,0,0.65)
+    ),
+    url('./wedding-bg.jpg') center center / cover no-repeat !important;
+  min-height: 420px;
+  position: relative;
+  overflow: hidden;
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script></head><body><svg width="0" height="0" style="position:absolute"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7e7bd"/><stop offset="1" stop-color="#b07a3a"/></linearGradient><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4a1ac"/><stop offset="1" stop-color="#b02a46"/></linearGradient></defs></svg><div class="wrap">
 <div class="authbar"><div class="authleft"><span id="authBadge" class="authbadge viewer">VIEW ONLY</span><span id="authName" class="authname">Public access</span></div><div style="display:flex;gap:6px;align-items:center"><button id="accessBtn" class="authbtn mutate-only" style="display:none">⚙ Access</button><button id="authBtn" class="authbtn primary">🔐 Sign in</button></div></div>
 <div id="setupNote" class="setupnote" style="display:none"></div>
