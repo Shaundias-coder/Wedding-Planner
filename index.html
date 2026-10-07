@@ -92,7 +92,35 @@ body{font-feature-settings:'tnum';letter-spacing:.005em}
 .att{position:relative;display:inline-flex}.att img{width:58px;height:58px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}.att a{font-size:32px;text-decoration:none}
 .att .x{position:absolute;top:-7px;right:-7px;background:#000;border:1px solid var(--line);border-radius:50%;width:18px;height:18px;font-size:12px;line-height:1;padding:0;color:#fff}
 .mv{font-size:11px!important}
-.stat b.warn{color:var(--warn)}.stat b.ok{color:var(--ok)}.bulk{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 4px;padding:8px 10px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04)}.chip[disabled]{opacity:.35;pointer-events:none}.cds{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}.cdc{text-align:center}.cdc .ring{margin:8px auto 0}.tk{font:600 13px Inter;color:var(--gold);margin-top:8px;letter-spacing:.05em;font-variant-numeric:tabular-nums}.hero2 .ring b{font-size:34px}
+.stat b.warn{color:var(--warn)}.stat.clickable{
+  cursor:pointer;
+  transition:.2s ease;
+  position:relative;
+}
+
+.stat.clickable:hover{
+  border-color:rgba(212,175,106,.65);
+  transform:translateY(-2px);
+  box-shadow:0 12px 30px rgba(0,0,0,.35);
+}
+
+.stat.clickable.selected{
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px rgba(212,175,106,.25),
+             0 12px 30px rgba(212,175,106,.12);
+}
+
+.stat.clickable.selected:after{
+  content:'Viewing';
+  position:absolute;
+  top:10px;
+  right:12px;
+  font-size:10px;
+  color:var(--gold);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.stat b.ok{color:var(--ok)}.bulk{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 4px;padding:8px 10px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04)}.chip[disabled]{opacity:.35;pointer-events:none}.cds{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}.cdc{text-align:center}.cdc .ring{margin:8px auto 0}.tk{font:600 13px Inter;color:var(--gold);margin-top:8px;letter-spacing:.05em;font-variant-numeric:tabular-nums}.hero2 .ring b{font-size:34px}
 .authbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 4px;padding:8px 10px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.035);backdrop-filter:blur(10px)}
 .authleft{display:flex;align-items:center;gap:8px;min-width:0}.authname{font-size:12px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.authbadge{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.1)}.authbadge.viewer{color:var(--mut)}.authbadge.editor{color:#111;background:var(--gold);border-color:var(--gold)}
 .authbtn{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 11px;border-radius:10px;font:600 12px Inter;cursor:pointer}.authbtn.primary{background:linear-gradient(135deg,#f0d9a0,#b98a3e);color:#111;border-color:transparent}.authbtn.danger{color:var(--warn)}
@@ -333,7 +361,7 @@ if(Object.keys(inv).length)out.push({name,side,phone:String(o.phone||o.mobile||'
 if(!out.length)return alert('No guests found. Use columns: Name, Side, Phone, Address, Roce, Wedding, Guests.');
 if(!confirm('Import '+out.length+' invites?'))return;D.guests.push(...out);save();render()}catch(e){alert('Could not read that file.')}}
 const stat=t=>{const s=$('#sync');if(s)s.textContent=t};
-let tab='home',flt='All',sf='All',showForm=false,ed=null,guestSearch='';const selG=new Set();
+let tab='home',flt='All',sf='All',showForm=false,ed=null,guestSearch='',guestStatusFilter='all';const selG=new Set();
 const m=n=>D.cur+Number(n||0).toLocaleString(),grp=()=>flt==='All'?null:EV[flt];
 const inEv=it=>!grp()||grp().includes(it.ev);
 const GEV=['Roce','Wedding'],gk=e=>e==='Roce'?'Roce':'Wedding',gIn=g=>flt==='All'||!!g.inv[flt];L.Wedding='Wedding (Nuptials + Reception)';
@@ -375,13 +403,92 @@ function inp(x,sec){const id='f_'+x.k;return `<label class="${x.t==='area'?'full
 x.t==='sel'?`<select id="${id}">${(sec==='itin'?EV[flt]:x.o).map(o=>`<option value="${o}">${L[o]||o}</option>`).join('')}</select>`:
 x.t==='area'?`<textarea id="${id}" rows="3"></textarea>`:x.t==='bool'?`<input type="checkbox" id="${id}">`:
 `<input id="${id}" type="${x.t==='num'?'number':x.t}">`}</label>`}
-function gOver(){const G=D.guests,hc=g=>Math.max(0,...GEV.map(e=>g.inv[e]?+g.inv[e].n:0)),live=G.filter(g=>GEV.some(e=>g.inv[e]&&g.inv[e].rsvp!=='Declined')),
-exp=live.reduce((s,g)=>s+hc(g),0),sent=live.filter(g=>g.sent).reduce((s,g)=>s+hc(g),0),pend=exp-sent,pc=exp?Math.round(100*sent/exp):0,
-conf=G.reduce((s,g)=>s+Math.max(0,...GEV.map(e=>g.inv[e]&&g.inv[e].rsvp==='Attending'?+g.inv[e].n:0)),0);
-return `<div class="grid"><div class="stat"><b>${exp}</b><span>Total guests expected · ${live.length} invites</span></div><div class="stat"><b>${sent}</b><span>Invited · invitation sent</span><div class="bar"><i style="width:${pc}%"></i></div></div><div class="stat"><b class="warn">${pend}</b><span>Pending to invite</span></div><div class="stat"><b class="ok">${conf}</b><span>RSVP confirmed</span><div class="bar"><i style="width:${exp?100*conf/exp:0}%"></i></div></div></div><div class="meta" style="margin:0 0 6px">${GEV.map(e=>`<span class="tag gold">${L[e]}: ${sum(0,e)-sum(0,e,'Declined')} expected · ${sum(0,e,'Attending')} confirmed · ${sum(0,e,'Pending')} awaiting RSVP</span>`).join('')}</div>`}
+function gOver(){
+  const G=D.guests,
+    hc=g=>Math.max(0,...GEV.map(e=>g.inv[e]?+g.inv[e].n:0)),
+    live=G.filter(g=>GEV.some(e=>g.inv[e]&&g.inv[e].rsvp!=='Declined')),
+    exp=live.reduce((s,g)=>s+hc(g),0),
+    sentInvites=live.filter(g=>g.sent).length,
+    pendingInvites=live.filter(g=>!g.sent).length,
+    sentHeadcount=live.filter(g=>g.sent).reduce((s,g)=>s+hc(g),0),
+    pc=live.length?Math.round(100*sentInvites/live.length):0,
+    conf=G.reduce(
+      (s,g)=>s+Math.max(
+        0,
+        ...GEV.map(e=>
+          g.inv[e]&&g.inv[e].rsvp==='Attending'
+            ?+g.inv[e].n
+            :0
+        )
+      ),
+      0
+    );
+
+  return `
+    <div class="grid">
+
+      <div
+        class="stat clickable ${guestStatusFilter==='all'?'selected':''}"
+        data-guest-filter="all"
+        title="Show all guests"
+      >
+        <b>${exp}</b>
+        <span>Total guests expected · ${live.length} invites</span>
+      </div>
+
+      <div
+        class="stat clickable ${guestStatusFilter==='sent'?'selected':''}"
+        data-guest-filter="sent"
+        title="Show guests whose invitation has been sent"
+      >
+        <b>${sentInvites}</b>
+        <span>Invitations sent · ${sentHeadcount} guests</span>
+        <div class="bar">
+          <i style="width:${pc}%"></i>
+        </div>
+      </div>
+
+      <div
+        class="stat clickable ${guestStatusFilter==='pending'?'selected':''}"
+        data-guest-filter="pending"
+        title="Show guests whose invitation has not been sent"
+      >
+        <b class="warn">${pendingInvites}</b>
+        <span>Invitations pending</span>
+      </div>
+
+      <div class="stat">
+        <b class="ok">${conf}</b>
+        <span>RSVP confirmed</span>
+        <div class="bar">
+          <i style="width:${exp?100*conf/exp:0}%"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="meta" style="margin:0 0 6px">
+      ${GEV.map(e=>`
+        <span class="tag gold">
+          ${L[e]}:
+          ${sum(0,e)-sum(0,e,'Declined')} expected ·
+          ${sum(0,e,'Attending')} confirmed ·
+          ${sum(0,e,'Pending')} awaiting RSVP
+        </span>
+      `).join('')}
+    </div>
+  `;
+}
 function guests(items){let h=gOver()+`<div class="chips"><label class="chip">⬆ Import from Excel / CSV<input type="file" hidden id="xl" accept=".xlsx,.xls,.csv"></label><span class="sub">Columns: Name · Side · Phone · Address · Roce · Wedding · Guests · Sent</span></div><div class="chips">${['All',...SIDES].map(s=>`<button class="chip ${sf===s?'on':''}" data-sf="${s}">${s}</button>`).join('')}</div>`;
 if(showForm)h+=`<div class="form">${inp(txt('name','Name / Family'))}<label>Side<select id="g_side">${SIDES.map(s=>`<option>${s}</option>`).join('')}</select></label><label id="g_rem_w" style="display:none">Remark (for Mutual)<input id="f_remark" placeholder="e.g. Family friend, colleague, neighbour"></label>${inp(txt('phone','Phone'))}<label class="full">Address<textarea id="f_addr" rows="2"></textarea></label><div class="full" style="color:var(--mut);font-size:12px">Invited to · number of guests</div>${GEV.map(e=>`<label class="row"><input type="checkbox" id="g_on_${e}" ${flt===e?'checked':''}> ${L[e]} <input type="number" id="g_n_${e}" value="1" min="1"></label>`).join('')}<label class="row full"><input type="checkbox" id="g_sent"> ✉ Invitation sent</label><button class="add full" data-save>${ed!==null?'✓ Update guest':'Save guest'}</button>${ed!==null?'<button class="chip full" data-cancel>Cancel</button>':''}</div>`;
 items=items.filter(x=>sf==='All'||x.it.side===sf);
+
+if(guestStatusFilter==='sent'){
+  items=items.filter(x=>x.it.sent);
+}else if(guestStatusFilter==='pending'){
+  items=items.filter(x=>!x.it.sent);
+}
+
 const q=guestSearch.trim().toLowerCase();
 
 if(q){
@@ -396,7 +503,51 @@ if(q){
     ].some(v=>String(v??'').toLowerCase().includes(q));
   });
 }
-{const n=items.filter(x=>selG.has(x.it)).length,all=items.length&&n===items.length,dis=n?'':'disabled';h+=`<div class="bulk">   <input     id="guestSearch"     type="search"     placeholder="🔎 Search guest or address..."     value="${esc(guestSearch)}"     style="min-width:230px;flex:1;max-width:320px"   >    <label class="tag" style="cursor:pointer">     <input type="checkbox" id="selall" ${all?'checked':''}>     Select all (${items.length})   </label><span class="sub">${n} selected · showing ${items.length} of ${D.guests.length}</span><span style="flex:1"></span><button class="chip" ${dis} data-bulk="up">▲ Up</button><button class="chip" ${dis} data-bulk="down">▼ Down</button><button class="chip" ${dis} data-bulk="sent">✉ Mark sent</button><button class="chip" ${dis} data-bulk="unsent">✉ Not sent</button><button class="chip" ${dis} data-bulk="del" style="color:var(--warn)">🗑 Delete</button></div>`}
+{const n=items.filter(x=>selG.has(x.it)).length,
+  all=items.length&&n===items.length,
+  dis=n?'':'disabled';
+
+  const filterLabel=
+    guestStatusFilter==='sent'
+      ?' · Invitations sent'
+      :guestStatusFilter==='pending'
+        ?' · Invitations pending'
+        :'';
+
+  h+=`<div class="bulk">
+
+    <input
+      id="guestSearch"
+      type="search"
+      placeholder="🔎 Search guests..."
+      value="${esc(guestSearch)}"
+      style="min-width:230px;flex:1;max-width:320px"
+    >
+
+    <label class="tag" style="cursor:pointer">
+      <input type="checkbox" id="selall" ${all?'checked':''}>
+      ☑ Select all (${items.length})
+    </label>
+
+    <span class="sub">
+      ${n} selected · showing ${items.length} of ${D.guests.length}${filterLabel}
+    </span>
+
+    <span style="flex:1"></span>
+
+    <button class="chip" ${dis} data-bulk="sent">
+      ✓ Mark sent
+    </button>
+
+    <button class="chip" ${dis} data-bulk="unsent">
+      ○ Mark not sent
+    </button>
+
+    <button class="chip" ${dis} data-bulk="del" style="color:var(--warn)">
+      🗑 Delete
+    </button>
+
+  </div>`}
 if(!items.length)return h+'<div class="empty">No guests yet. Tap “Add”.</div>';
 return h+items.map(({it,i})=>`<div class="card"><div class="top"><div style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" data-gs="${i}" ${selG.has(it)?'checked':''} style="margin-top:4px;width:18px;height:18px"><div><div class="t">${esc(it.name)}</div>${it.addr?`<div class="sub">📍 ${esc(it.addr)}</div>`:''}</div></div><span style="white-space:nowrap">${mv('guests',i)}<button class="x" data-edit="guests" data-i="${i}" title="Edit">✎</button><button class="x" data-del="guests" data-i="${i}" title="Delete">×</button></span></div>
 <div class="meta"><span class="tag gold">${it.side==='Mutual'&&it.remark?'Mutual – '+esc(it.remark):it.side+' side'}</span>${it.phone?`<span class="tag">${esc(it.phone)}</span>`:''}<label class="tag" style="cursor:pointer"><input type="checkbox" data-sec="guests" data-i="${i}" data-k="sent" ${it.sent?'checked':''}> ✉ Invitation sent</label></div>
@@ -426,7 +577,7 @@ const fm=$('.form');if(fm)fm.scrollIntoView({behavior:'smooth',block:'center'})}
 function render(){nav();$('#app').innerHTML=tab==='home'?home():list(tab);if(showForm&&ed!==null)fillForm();if(tab==='home')tick();
 $('#n1').value=D.a;$('#n2').value=D.b;$('#dt').value=D.date;$('#cur').value=D.cur}
 document.addEventListener('click',e=>{const t=e.target,d=t.dataset;if(d.userRole){   const role=d.role;   SB.functions.invoke('manage-planner-users',{     body:{action:'set_role',id:d.userRole,role}   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }  if(d.userActive){   SB.functions.invoke('manage-planner-users',{     body:{       action:'set_active',       id:d.userActive,       active:d.active==='1'     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }  if(d.resetUser){   const p=prompt('Enter a new password (at least 8 characters):');   if(p===null)return;   if(p.length<8){     setAccessMsg('Password must be at least 8 characters.');     return;   }    SB.functions.invoke('manage-planner-users',{     body:{       action:'reset_password',       id:d.resetUser,       password:p     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     setAccessMsg('Password reset successfully.');   });   return; }  if(d.deleteUser){   if(!confirm('Delete this planner user permanently?'))return;    SB.functions.invoke('manage-planner-users',{     body:{       action:'delete',       id:d.deleteUser     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }if(!CAN_EDIT&&(d.edit||d.del||d.mv||d.bulk||('save' in d)||('add' in d)||d.sorttime||('cancel' in d)||d.rmf!==undefined))return;
-if(d.tab){tab=d.tab;flt=tab==='itin'?'Roce':'All';sf='All';showForm=false;ed=null}
+if(d.guestFilter){   tab='guests';   guestStatusFilter=d.guestFilter;   guestSearch='';   selG.clear();   showForm=false;   ed=null;   sf='All';   flt='All';   render();   return; }  if(d.tab){   tab=d.tab;   flt=tab==='itin'?'Roce':'All';   sf='All';    if(tab==='guests'){     guestStatusFilter='all';     guestSearch='';     selG.clear();   }    showForm=false;   ed=null; }
 else if(d.edit){tab=d.edit;ed=+d.i;showForm=true;if(tab==='itin')flt=EV.Roce.includes(D.itin[ed].ev)?'Roce':'Wedding'}
 else if('cancel' in d){showForm=false;ed=null}
 else if(d.mv){move(d.mv,+d.i,+d.dir);save()}
