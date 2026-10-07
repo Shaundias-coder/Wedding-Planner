@@ -118,7 +118,39 @@ const showAuth=(on=true)=>$('#authModal').classList.toggle('on',on);
 const showAccess=(on=true)=>{$('#accessModal').classList.toggle('on',on);if(on)loadEditors()};
 const setAuthMsg=t=>$('#authMsg').textContent=t||'';
 const setAccessMsg=t=>$('#accessMsg').textContent=t||'';
-function updateAuthUI(){const badge=$('#authBadge'),name=$('#authName'),btn=$('#authBtn'),ab=$('#accessBtn');if(!SESSION){badge.textContent='VIEW ONLY';badge.className='authbadge viewer';name.textContent='Public access';btn.textContent='🔐 Sign in';ab.style.display='none';}else if(CAN_EDIT){badge.textContent=IS_ADMIN?'EDITOR · ADMIN':'EDITOR';badge.className='authbadge editor';name.textContent=SESSION.user.email||'Signed in';btn.textContent='↪ Sign out';ab.style.display=IS_ADMIN?'inline-block':'none';}else{badge.textContent='SIGNED IN · VIEW ONLY';badge.className='authbadge viewer';name.textContent=SESSION.user.email||'Signed in';btn.textContent='↪ Sign out';ab.style.display='none';}document.body.classList.toggle('editor',CAN_EDIT);}
+async function refreshAccess(){
+  if(!SB){
+    SESSION=null;
+    CAN_EDIT=false;
+    IS_ADMIN=false;
+    updateAuthUI();
+    return;
+  }
+
+  const {data:{session}} = await SB.auth.getSession();
+
+  SESSION = session || null;
+  CAN_EDIT = false;
+  IS_ADMIN = false;
+
+  if(SESSION?.user?.id){
+    const {data:profile, error} = await SB
+      .from('planner_users')
+      .select('id, username, role, active')
+      .eq('id', SESSION.user.id)
+      .eq('active', true)
+      .maybeSingle();
+
+    if(!error && profile){
+      SESSION.plannerProfile = profile;
+
+      CAN_EDIT = profile.role === 'admin' || profile.role === 'editor';
+      IS_ADMIN = profile.role === 'admin';
+    }
+  }
+
+  updateAuthUI();
+}
 async function refreshAccess(){if(!SB){SESSION=null;CAN_EDIT=false;IS_ADMIN=false;updateAuthUI();return}const {data:{session}}=await SB.auth.getSession();SESSION=session||null;CAN_EDIT=false;IS_ADMIN=false;if(SESSION?.user?.email){const em=SESSION.user.email.toLowerCase();const er=await SB.from('planner_editors').select('email,active').eq('email',em).eq('active',true).maybeSingle();CAN_EDIT=!!er.data&&!er.error;if(CAN_EDIT){const ar=await SB.from('planner_admins').select('email,active').eq('email',em).eq('active',true).maybeSingle();IS_ADMIN=!!ar.data&&!ar.error;}}updateAuthUI();}
 async function signIn(){if(!SB)return setAuthMsg('Finish the Supabase setup first.');setAuthMsg('Signing in…');const {error}=await SB.auth.signInWithPassword({email:$('#authEmail').value.trim(),password:$('#authPassword').value});if(error)return setAuthMsg(error.message);setAuthMsg('Signed in.');showAuth(false);await refreshAccess();await loadShared();render();}
 async function signUp(){if(!SB)return setAuthMsg('Finish the Supabase setup first.');const email=$('#authEmail').value.trim(),password=$('#authPassword').value;if(!email||password.length<6)return setAuthMsg('Enter a valid email and a password of at least 6 characters.');setAuthMsg('Creating account…');const {error}=await SB.auth.signUp({email,password});if(error)return setAuthMsg(error.message);setAuthMsg('Account created. Verify your email if required, then sign in. An admin must still approve edit access.');}
