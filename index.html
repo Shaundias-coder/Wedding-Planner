@@ -302,7 +302,7 @@ const L={Roce:'Roce',Nuptials:'Nuptials (Church)',Reception:'Reception (Hall)',G
 const SIDES=["Dad's","Mom's","Brother's","Groom's","Bride's","Mutual"],RS=['Pending','Attending','Declined'];
 const sel=(k,l,o,e)=>({k,l,t:'sel',o,e}),txt=(k,l)=>({k,l,t:'text'}),num=(k,l,e)=>({k,l,t:'num',e});
 const S={
-guests:{t:'Guests & RSVP',f:[]},itin:{t:'Itinerary',f:[]},
+guests:{t:'Guests & RSVP',f:[]},itin:{t:'Itinerary',f:[   sel('ev','Event',EVO),   txt('time','Time'),   txt('what','Activity / Description'),   txt('where','Location / Venue') ]},
 menu:{t:'Catering Menu',f:[txt('dish','Dish / Item'),sel('ev','Event',ALL),sel('course','Course',['Welcome drink','Starter','Main – Non-veg','Main – Veg','Rice / Bread','Dessert','Beverage','Other']),txt('qty','Qty / servings'),txt('note','Notes')]},
 vendors:{t:'Vendors & Payments',f:[txt('name','Vendor / Person'),sel('role','Role',['Caterer','MC / Emcee','Choir','Church / Parish','Hall / Venue','Band / DJ','Photo / Video','Decor / Flowers','Bridal wear','Makeup & Hair','Cake','Transport','Invitations','Other']),sel('ev','Event',EVO),txt('phone','Phone'),num('total','Total agreed'),num('paid','Advance / paid so far',1),{k:'due',l:'Balance due on',t:'date'},{k:'settled',l:'✔ Full payment done',t:'bool'}]},
 items:{t:'Items Needed',f:[txt('item','Item'),sel('ev','Event',EVO),txt('qty','Qty'),txt('who','Responsible'),sel('status','Status',['Needed','Ordered','Bought','Packed'],1)]},
