@@ -401,7 +401,7 @@ else S[tab].f.forEach(f=>{const el=$('#f_'+f.k);if(!el)return;if(f.t==='bool')el
 const fm=$('.form');if(fm)fm.scrollIntoView({behavior:'smooth',block:'center'})}
 function render(){nav();$('#app').innerHTML=tab==='home'?home():list(tab);if(showForm&&ed!==null)fillForm();if(tab==='home')tick();
 $('#n1').value=D.a;$('#n2').value=D.b;$('#dt').value=D.date;$('#cur').value=D.cur}
-document.addEventListener('click',e=>{const t=e.target,d=t.dataset;if(d.revokeEmail)return revokeEditor(d.revokeEmail);if(!CAN_EDIT&&(d.edit||d.del||d.mv||d.bulk||('save' in d)||('add' in d)||d.sorttime||('cancel' in d)||d.rmf!==undefined))return;
+document.addEventListener('click',e=>{const t=e.target,d=t.dataset;if(d.userRole){   const role=d.role;   SB.functions.invoke('manage-planner-users',{     body:{action:'set_role',id:d.userRole,role}   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }  if(d.userActive){   SB.functions.invoke('manage-planner-users',{     body:{       action:'set_active',       id:d.userActive,       active:d.active==='1'     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }  if(d.resetUser){   const p=prompt('Enter a new password (at least 8 characters):');   if(p===null)return;   if(p.length<8){     setAccessMsg('Password must be at least 8 characters.');     return;   }    SB.functions.invoke('manage-planner-users',{     body:{       action:'reset_password',       id:d.resetUser,       password:p     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     setAccessMsg('Password reset successfully.');   });   return; }  if(d.deleteUser){   if(!confirm('Delete this planner user permanently?'))return;    SB.functions.invoke('manage-planner-users',{     body:{       action:'delete',       id:d.deleteUser     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }if(!CAN_EDIT&&(d.edit||d.del||d.mv||d.bulk||('save' in d)||('add' in d)||d.sorttime||('cancel' in d)||d.rmf!==undefined))return;
 if(d.tab){tab=d.tab;flt=tab==='itin'?'Roce':'All';sf='All';showForm=false;ed=null}
 else if(d.edit){tab=d.edit;ed=+d.i;showForm=true;if(tab==='itin')flt=EV.Roce.includes(D.itin[ed].ev)?'Roce':'Wedding'}
 else if('cancel' in d){showForm=false;ed=null}
@@ -442,7 +442,6 @@ window.addEventListener('DOMContentLoaded',()=>{
   $('#authBtn')?.addEventListener('click',()=>SESSION?signOut():showAuth(true));
   $('#closeAuth')?.addEventListener('click',()=>showAuth(false));
   $('#signInBtn')?.addEventListener('click',signIn);
-  $('#signUpBtn')?.addEventListener('click',signUp);
   $('#authModal')?.addEventListener('click',e=>{if(e.target.id==='authModal')showAuth(false)});
   $('#accessBtn')?.addEventListener('click',()=>showAccess(true));
   $('#closeAccess')?.addEventListener('click',()=>showAccess(false));
