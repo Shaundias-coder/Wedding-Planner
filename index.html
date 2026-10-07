@@ -344,7 +344,17 @@ else if(d.sec){D[d.sec][+d.i][d.k]=t.type==='checkbox'?t.checked:t.value;if(d.se
 render();
 document.addEventListener('focusout',()=>{if(pend&&!showForm){pend=false;render()}});
 (async()=>{if(!SUPABASE_READY()){$('#setupNote').style.display='block';$('#setupNote').textContent='Setup needed: create a Supabase project and paste its Project URL + Publishable/anon key into index.html. Until then this planner remains local-only.';updateAuthUI();return}SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);SB.auth.onAuthStateChange(async()=>{await refreshAccess()});await refreshAccess();await loadShared();await subscribeShared();render()})();
-$('#authBtn').addEventListener('click',()=>SESSION?signOut():showAuth(true));$('#closeAuth').addEventListener('click',()=>showAuth(false));$('#signInBtn').addEventListener('click',signIn);$('#signUpBtn').addEventListener('click',signUp);$('#authModal').addEventListener('click',e=>{if(e.target.id==='authModal')showAuth(false)});$('#accessBtn').addEventListener('click',()=>showAccess(true));$('#closeAccess').addEventListener('click',()=>showAccess(false));$('#grantBtn').addEventListener('click',grantEditor);$('#accessModal').addEventListener('click',e=>{if(e.target.id==='accessModal')showAccess(false)});
+window.addEventListener('DOMContentLoaded',()=>{
+  $('#authBtn')?.addEventListener('click',()=>SESSION?signOut():showAuth(true));
+  $('#closeAuth')?.addEventListener('click',()=>showAuth(false));
+  $('#signInBtn')?.addEventListener('click',signIn);
+  $('#signUpBtn')?.addEventListener('click',signUp);
+  $('#authModal')?.addEventListener('click',e=>{if(e.target.id==='authModal')showAuth(false)});
+  $('#accessBtn')?.addEventListener('click',()=>showAccess(true));
+  $('#closeAccess')?.addEventListener('click',()=>showAccess(false));
+  $('#grantBtn')?.addEventListener('click',grantEditor);
+  $('#accessModal')?.addEventListener('click',e=>{if(e.target.id==='accessModal')showAccess(false)});
+});
 </script>
 <div id="authModal" class="authmodal"><div class="authbox"><h3>Planner access</h3><p id="authHint">Sign in with an approved editor account to make shared changes.</p><label>Email<input id="authEmail" type="email" autocomplete="username" placeholder="you@example.com"></label><label>Password<input id="authPassword" type="password" autocomplete="current-password" placeholder="••••••••"></label><div class="authactions"><button id="signInBtn" class="authbtn primary">Sign in</button><button id="signUpBtn" class="authbtn">Create account</button><button id="closeAuth" class="authbtn">Close</button></div><div id="authMsg" class="sub" style="margin-top:10px"></div></div></div>
 <div id="accessModal" class="authmodal"><div class="authbox"><h3>Manage editor access</h3><p>Add an email address to allow that Supabase account to edit the shared planner.</p><label>Email to grant<input id="grantEmail" type="email" placeholder="editor@example.com"></label><div class="authactions"><button id="grantBtn" class="authbtn primary">Grant edit access</button><button id="closeAccess" class="authbtn">Close</button></div><div id="accessMsg" class="sub" style="margin-top:10px"></div><div id="accessList" class="accesslist"></div></div></div>
