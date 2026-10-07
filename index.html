@@ -335,7 +335,7 @@ if(Object.keys(inv).length)out.push({name,side,phone:String(o.phone||o.mobile||'
 if(!out.length)return alert('No guests found. Use columns: Name, Side, Phone, Address, Roce, Wedding, Guests.');
 if(!confirm('Import '+out.length+' invites?'))return;D.guests.push(...out);save();render()}catch(e){alert('Could not read that file.')}}
 const stat=t=>{const s=$('#sync');if(s)s.textContent=t};
-let tab='home',flt='All',sf='All',showForm=false,ed=null;const selG=new Set();
+let tab='home',flt='All',sf='All',showForm=false,ed=null,guestSearch='';const selG=new Set();
 const m=n=>D.cur+Number(n||0).toLocaleString(),grp=()=>flt==='All'?null:EV[flt];
 const inEv=it=>!grp()||grp().includes(it.ev);
 const GEV=['Roce','Wedding'],gk=e=>e==='Roce'?'Roce':'Wedding',gIn=g=>flt==='All'||!!g.inv[flt];L.Wedding='Wedding (Nuptials + Reception)';
@@ -384,7 +384,21 @@ return `<div class="grid"><div class="stat"><b>${exp}</b><span>Total guests expe
 function guests(items){let h=gOver()+`<div class="chips"><label class="chip">⬆ Import from Excel / CSV<input type="file" hidden id="xl" accept=".xlsx,.xls,.csv"></label><span class="sub">Columns: Name · Side · Phone · Address · Roce · Wedding · Guests · Sent</span></div><div class="chips">${['All',...SIDES].map(s=>`<button class="chip ${sf===s?'on':''}" data-sf="${s}">${s}</button>`).join('')}</div>`;
 if(showForm)h+=`<div class="form">${inp(txt('name','Name / Family'))}<label>Side<select id="g_side">${SIDES.map(s=>`<option>${s}</option>`).join('')}</select></label><label id="g_rem_w" style="display:none">Remark (for Mutual)<input id="f_remark" placeholder="e.g. Family friend, colleague, neighbour"></label>${inp(txt('phone','Phone'))}<label class="full">Address<textarea id="f_addr" rows="2"></textarea></label><div class="full" style="color:var(--mut);font-size:12px">Invited to · number of guests</div>${GEV.map(e=>`<label class="row"><input type="checkbox" id="g_on_${e}" ${flt===e?'checked':''}> ${L[e]} <input type="number" id="g_n_${e}" value="1" min="1"></label>`).join('')}<label class="row full"><input type="checkbox" id="g_sent"> ✉ Invitation sent</label><button class="add full" data-save>${ed!==null?'✓ Update guest':'Save guest'}</button>${ed!==null?'<button class="chip full" data-cancel>Cancel</button>':''}</div>`;
 items=items.filter(x=>sf==='All'||x.it.side===sf);
-{const n=items.filter(x=>selG.has(x.it)).length,all=items.length&&n===items.length,dis=n?'':'disabled';h+=`<div class="bulk"><label class="tag" style="cursor:pointer"><input type="checkbox" id="selall" ${all?'checked':''}> Select all (${items.length})</label><span class="sub">${n} selected · showing ${items.length} of ${D.guests.length}</span><span style="flex:1"></span><button class="chip" ${dis} data-bulk="up">▲ Up</button><button class="chip" ${dis} data-bulk="down">▼ Down</button><button class="chip" ${dis} data-bulk="sent">✉ Mark sent</button><button class="chip" ${dis} data-bulk="unsent">✉ Not sent</button><button class="chip" ${dis} data-bulk="del" style="color:var(--warn)">🗑 Delete</button></div>`}
+const q=guestSearch.trim().toLowerCase();
+
+if(q){
+  items=items.filter(({it})=>{
+    return [
+      it.name,
+      it.addr,
+      it.phone,
+      it.side,
+      it.remark,
+      ...GEV
+    ].some(v=>String(v??'').toLowerCase().includes(q));
+  });
+}
+{const n=items.filter(x=>selG.has(x.it)).length,all=items.length&&n===items.length,dis=n?'':'disabled';h+=`<div class="bulk">   <input     id="guestSearch"     type="search"     placeholder="🔎 Search guest or address..."     value="${esc(guestSearch)}"     style="min-width:230px;flex:1;max-width:320px"   >    <label class="tag" style="cursor:pointer">     <input type="checkbox" id="selall" ${all?'checked':''}>     Select all (${items.length})   </label><span class="sub">${n} selected · showing ${items.length} of ${D.guests.length}</span><span style="flex:1"></span><button class="chip" ${dis} data-bulk="up">▲ Up</button><button class="chip" ${dis} data-bulk="down">▼ Down</button><button class="chip" ${dis} data-bulk="sent">✉ Mark sent</button><button class="chip" ${dis} data-bulk="unsent">✉ Not sent</button><button class="chip" ${dis} data-bulk="del" style="color:var(--warn)">🗑 Delete</button></div>`}
 if(!items.length)return h+'<div class="empty">No guests yet. Tap “Add”.</div>';
 return h+items.map(({it,i})=>`<div class="card"><div class="top"><div style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" data-gs="${i}" ${selG.has(it)?'checked':''} style="margin-top:4px;width:18px;height:18px"><div><div class="t">${esc(it.name)}</div>${it.addr?`<div class="sub">📍 ${esc(it.addr)}</div>`:''}</div></div><span style="white-space:nowrap">${mv('guests',i)}<button class="x" data-edit="guests" data-i="${i}" title="Edit">✎</button><button class="x" data-del="guests" data-i="${i}" title="Delete">×</button></span></div>
 <div class="meta"><span class="tag gold">${it.side==='Mutual'&&it.remark?'Mutual – '+esc(it.remark):it.side+' side'}</span>${it.phone?`<span class="tag">${esc(it.phone)}</span>`:''}<label class="tag" style="cursor:pointer"><input type="checkbox" data-sec="guests" data-i="${i}" data-k="sent" ${it.sent?'checked':''}> ✉ Invitation sent</label></div>
@@ -446,8 +460,24 @@ if(d.up!==undefined){upload(+d.up,[...t.files]);t.value='';return}
 if(d.g!==undefined){D.guests[+d.g].inv[d.e][d.r?'rsvp':'n']=t.value;save();render()}
 else if(d.evd){(D.evd[d.evd]=D.evd[d.evd]||{})[d.k]=t.value;save()}
 else if(d.sec){D[d.sec][+d.i][d.k]=t.type==='checkbox'?t.checked:t.value;if(d.sec==='vendors'&&d.k==='settled'){const v=D.vendors[+d.i];if(v.settled){v.settledOn=v.settledOn||new Date().toISOString().slice(0,10);v.paid=v.total}else v.settledOn=''}save();render()}});
+
+document.addEventListener('input',e=>{
+  if(e.target.id==='guestSearch'){
+    guestSearch=e.target.value;
+    render();
+
+    const input=$('#guestSearch');
+    if(input){
+      input.focus();
+      input.setSelectionRange(
+        input.value.length,
+        input.value.length
+      );
+    }
+  }
+});
+
 [['n1','a'],['n2','b'],['dt','date'],['cur','cur']].forEach(([id,k])=>$('#'+id).addEventListener('input',e=>{if(!CAN_EDIT)return;D[k]=e.target.value;save();if(tab==='home')render()}));
-render();
 document.addEventListener('focusout',()=>{if(pend&&!showForm){pend=false;render()}});
 (async()=>{if(!SUPABASE_READY()){$('#setupNote').style.display='block';$('#setupNote').textContent='Setup needed: create a Supabase project and paste its Project URL + Publishable/anon key into index.html. Until then this planner remains local-only.';updateAuthUI();return}SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);SB.auth.onAuthStateChange(async()=>{await refreshAccess()});await refreshAccess();await loadShared();await subscribeShared();render()})();
 window.addEventListener('DOMContentLoaded',()=>{
