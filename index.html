@@ -187,10 +187,104 @@ async function signOut(){if(SB)await SB.auth.signOut();SESSION=null;CAN_EDIT=fal
 async function loadShared(){if(!SB)return;stat('Loading shared planner…');const {data,error}=await SB.from('planner_data').select('data').eq('id','main').maybeSingle();if(error){stat('⚠ Shared data unavailable: '+error.message);return}if(data?.data){D=data.data;fill();try{localStorage.setItem('wp-mcw2',JSON.stringify(D))}catch(e){}stat(CAN_EDIT?'● Shared · editor':'● Shared · view only')}else{stat(CAN_EDIT?'● Ready to publish planner':'● Waiting for planner data');if(CAN_EDIT)await save(true)}}
 async function save(force=false){try{localStorage.setItem('wp-mcw2',JSON.stringify(D))}catch(e){}if(!SB||!CAN_EDIT){if(!SB)stat('Local only · finish Supabase setup to share');return}clearTimeout(tmr);tmr=setTimeout(async()=>{stat('Saving shared planner…');const {error}=await SB.from('planner_data').upsert({id:'main',data:JSON.parse(JSON.stringify(D)),updated_at:new Date().toISOString()},{onConflict:'id'});stat(error?'⚠ Save failed: '+error.message:'● Saved & shared')},700)}
 async function subscribeShared(){if(!SB||realtime)return;realtime=SB.channel('planner-live').on('postgres_changes',{event:'*',schema:'public',table:'planner_data',filter:'id=eq.main'},payload=>{if(!payload.new?.data)return;if(JSON.stringify(payload.new.data)===JSON.stringify(D))return;D=payload.new.data;fill();try{localStorage.setItem('wp-mcw2',JSON.stringify(D))}catch(e){}if(!showForm)render();stat(CAN_EDIT?'● Synced':'● Updated')}).subscribe()}
-async function loadEditors(){if(!SB||!IS_ADMIN)return;const {data,error}=await SB.from('planner_editors').select('email,active').order('email');const el=$('#accessList');if(error){el.textContent=error.message;return}el.innerHTML=(data||[]).map(x=>`<div class="accessrow"><span>${esc(x.email)}</span><button class="authbtn danger" data-revoke-email="${esc(x.email)}">Revoke</button></div>`).join('')||'<div class="sub" style="padding:10px 0">No editors yet.</div>'}
-async function grantEditor(){if(!SB||!IS_ADMIN)return;const email=$('#grantEmail').value.trim().toLowerCase();if(!email)return setAccessMsg('Enter an email.');setAccessMsg('Granting…');const {error}=await SB.rpc('grant_planner_editor',{p_email:email});if(error)return setAccessMsg(error.message);$('#grantEmail').value='';setAccessMsg('Edit access granted.');loadEditors()}
-async function revokeEditor(email){if(!SB||!IS_ADMIN)return;const {error}=await SB.rpc('revoke_planner_editor',{p_email:email});if(error)return setAccessMsg(error.message);loadEditors()}
+async function loadEditors(){
+  if(!SB || !IS_ADMIN) return;
 
+  const {data,error}=await SB.functions.invoke('manage-planner-users',{
+    body:{action:'list'}
+  });
+
+  const el=$('#accessList');
+
+  if(error){
+    el.textContent=error.message;
+    return;
+  }
+
+  const users=data?.users||[];
+
+  el.innerHTML=users.map(x=>`
+    <div class="accessrow">
+      <span>
+        <b>${esc(x.username)}</b> · ${esc(x.role)} · ${x.active?'Active':'Inactive'}
+      </span>
+
+      <span style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="authbtn"
+          data-user-role="${esc(x.id)}"
+          data-role="${x.role==='admin'?'editor':'admin'}">
+          ${x.role==='admin'?'Make editor':'Make admin'}
+        </button>
+
+        <button class="authbtn"
+          data-user-active="${esc(x.id)}"
+          data-active="${x.active?'0':'1'}">
+          ${x.active?'Disable':'Enable'}
+        </button>
+
+        <button class="authbtn danger"
+          data-reset-user="${esc(x.id)}">
+          Reset password
+        </button>
+
+        <button class="authbtn danger"
+          data-delete-user="${esc(x.id)}">
+          Delete
+        </button>
+      </span>
+    </div>
+  `).join('') || 
+  '<div class="sub" style="padding:10px 0">No planner users yet.</div>';
+}
+async function grantEditor(){
+  if(!SB || !IS_ADMIN) return;
+
+  const username=$('#grantUsername').value.trim().toLowerCase();
+  const password=$('#grantPassword').value;
+  const role=$('#grantRole').value;
+
+  if(!username)
+    return setAccessMsg('Enter a username.');
+
+  if(password.length<8)
+    return setAccessMsg('Password must be at least 8 characters.');
+
+  setAccessMsg('Creating user…');
+
+  const {data,error}=await SB.functions.invoke('manage-planner-users',{
+    body:{
+      action:'create',
+      username,
+      password,
+      role
+    }
+  });
+
+  if(error)
+    return setAccessMsg(data?.error || error.message);
+
+  $('#grantUsername').value='';
+  $('#grantPassword').value='';
+
+  setAccessMsg('User created successfully.');
+
+  loadEditors();
+}
+async function revokeEditor(id){
+  if(!SB || !IS_ADMIN) return;
+
+  const {data,error}=await SB.functions.invoke('manage-planner-users',{
+    body:{
+      action:'delete',
+      id
+    }
+  });
+
+  if(error)
+    return setAccessMsg(data?.error || error.message);
+
+  loadEditors();
+}
 const ALL=['Roce','Nuptials','Reception'],EVO=[...ALL,'General'],EV={Roce:['Roce'],Wedding:['Nuptials','Reception']};
 const L={Roce:'Roce',Nuptials:'Nuptials (Church)',Reception:'Reception (Hall)',General:'General'};
 const SIDES=["Dad's","Mom's","Brother's","Groom's","Bride's","Mutual"],RS=['Pending','Attending','Declined'];
@@ -356,6 +450,34 @@ window.addEventListener('DOMContentLoaded',()=>{
   $('#accessModal')?.addEventListener('click',e=>{if(e.target.id==='accessModal')showAccess(false)});
 });
 </script>
-<div id="authModal" class="authmodal"><div class="authbox"><h3>Planner access</h3><p id="authHint">Sign in with an approved editor account to make shared changes.</p><label>Username<input id="authUsername" type="text" autocomplete="username" placeholder="shaun"></label><label>Password<input id="authPassword" type="password" autocomplete="current-password" placeholder="••••••••"></label><div class="authactions"><button id="signInBtn" class="authbtn primary">Sign in</button><button id="signUpBtn" class="authbtn">Create account</button><button id="closeAuth" class="authbtn">Close</button></div><div id="authMsg" class="sub" style="margin-top:10px"></div></div></div>
-<div id="accessModal" class="authmodal"><div class="authbox"><h3>Manage editor access</h3><p>Add an email address to allow that Supabase account to edit the shared planner.</p><label>Email to grant<input id="grantEmail" type="email" placeholder="editor@example.com"></label><div class="authactions"><button id="grantBtn" class="authbtn primary">Grant edit access</button><button id="closeAccess" class="authbtn">Close</button></div><div id="accessMsg" class="sub" style="margin-top:10px"></div><div id="accessList" class="accesslist"></div></div></div>
+<div id="authModal" class="authmodal"><div class="authbox"><h3>Planner access</h3><p id="authHint">Sign in with an approved editor account to make shared changes.</p><label>Username<input id="authUsername" type="text" autocomplete="username" placeholder="shaun"></label><label>Password<input id="authPassword" type="password" autocomplete="current-password" placeholder="••••••••"></label><div class="authactions"><button id="signInBtn" class="authbtn primary">Sign in</button><button id="closeAuth" class="authbtn">Close</button></div><div id="authMsg" class="sub" style="margin-top:10px"></div></div></div>
+<div id="accessModal" class="authmodal">
+  <div class="authbox">
+    <h3>Manage planner access</h3>
+    <p>Create and manage username/password accounts. Shaun remains the Admin.</p>
+
+    <label>Username
+      <input id="grantUsername" type="text" placeholder="sandriya">
+    </label>
+
+    <label>Temporary password
+      <input id="grantPassword" type="password" placeholder="At least 8 characters">
+    </label>
+
+    <label>Role
+      <select id="grantRole">
+        <option value="editor">Editor</option>
+        <option value="admin">Admin</option>
+      </select>
+    </label>
+
+    <div class="authactions">
+      <button id="grantBtn" class="authbtn primary">＋ Create user</button>
+      <button id="closeAccess" class="authbtn">Close</button>
+    </div>
+
+    <div id="accessMsg" class="sub" style="margin-top:10px"></div>
+    <div id="accessList" class="accesslist"></div>
+  </div>
+</div>
 </body></html>
