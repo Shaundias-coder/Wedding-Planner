@@ -151,6 +151,36 @@ async function refreshAccess(){
 
   updateAuthUI();
 }
+function updateAuthUI(){
+  const badge=$('#authBadge');
+  const name=$('#authName');
+  const btn=$('#authBtn');
+  const access=$('#accessBtn');
+
+  document.body.classList.toggle('editor',CAN_EDIT);
+
+  if(SESSION){
+    const profile=SESSION.plannerProfile;
+    const username=profile?.username || SESSION.user?.email || 'Signed in';
+
+    badge.className='authbadge '+(CAN_EDIT?'editor':'viewer');
+    badge.textContent=CAN_EDIT
+      ? (IS_ADMIN?'ADMIN · EDITOR':'EDITOR')
+      : 'VIEW ONLY';
+
+    name.textContent=username;
+    btn.textContent='🔓 Sign out';
+
+    if(access) access.style.display=IS_ADMIN?'inline-block':'none';
+  }else{
+    badge.className='authbadge viewer';
+    badge.textContent='VIEW ONLY';
+    name.textContent='Public access';
+    btn.textContent='🔐 Sign in';
+
+    if(access) access.style.display='none';
+  }
+}
 async function signIn(){if(!SB)return setAuthMsg('Finish the Supabase setup first.');setAuthMsg('Signing in…');const {error}=await SB.auth.signInWithPassword({email:$('#authEmail').value.trim(),password:$('#authPassword').value});if(error)return setAuthMsg(error.message);setAuthMsg('Signed in.');showAuth(false);await refreshAccess();await loadShared();render();}
 async function signUp(){if(!SB)return setAuthMsg('Finish the Supabase setup first.');const email=$('#authEmail').value.trim(),password=$('#authPassword').value;if(!email||password.length<6)return setAuthMsg('Enter a valid email and a password of at least 6 characters.');setAuthMsg('Creating account…');const {error}=await SB.auth.signUp({email,password});if(error)return setAuthMsg(error.message);setAuthMsg('Account created. Verify your email if required, then sign in. An admin must still approve edit access.');}
 async function signOut(){if(SB)await SB.auth.signOut();SESSION=null;CAN_EDIT=false;IS_ADMIN=false;updateAuthUI();showAccess(false);render();}
