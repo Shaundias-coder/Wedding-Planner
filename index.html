@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wedding Planner · Roce & Wedding</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Playfair+Display:wght@500;700&family=Great+Vibes&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#09090a;--card:#141416;--card2:#1b1b1e;--ink:#f2f2f3;--mut:#8d8d95;--line:#27272b;--gold:#d4af6a;--ok:#4ade80;--warn:#fb923c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,sans-serif}
+.wrap{max-width:920px;margin:auto;padding:0 14px 70px}
+header{text-align:center;padding:28px 0 12px}
+.cross{color:var(--gold);letter-spacing:8px}
+h1{font:700 36px Cormorant Garamond,Georgia,serif;margin:2px 0;color:var(--gold)}
+.sub{color:var(--mut);font-size:12px}
+.names{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:10px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;max-width:100%}
+input:focus,select:focus,textarea:focus{outline:1px solid var(--gold)}
+.names input{text-align:center;width:130px;font:700 20px Cormorant Garamond,Georgia,serif}
+.names input[type=date]{font:14px Inter;width:auto}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding:8px 0;border-bottom:1px solid var(--line)}
+nav button,.chip{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--mut);padding:7px 14px;border-radius:99px;font:500 13px Inter;cursor:pointer}
+nav button.on,.chip.on{background:var(--gold);color:#111;border-color:var(--gold)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 6px;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:6px 0}
+.grid .stat{margin:0}
+.stat b{display:block;font:700 28px Cormorant Garamond,Georgia,serif;color:var(--gold)}
+.stat span{font-size:12px;color:var(--mut)}
+.hero{border:1px solid var(--gold);border-radius:20px;padding:20px;text-align:center;margin-top:14px;background:radial-gradient(circle at top,#2a2214,var(--card))}
+.hero b{font:700 56px Cormorant Garamond,Georgia,serif;display:block;line-height:1;color:var(--gold)}
+.ev{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:14px;padding:14px;margin-bottom:10px}
+.ev h3{margin:0 0 4px;font:700 22px Cormorant Garamond,Georgia,serif;color:var(--gold)}
+.ev p{margin:2px 0;color:var(--mut);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:8px 0}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.t{font-weight:600}.card.done .t{text-decoration:line-through;color:var(--mut)}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center;font-size:12px}
+.tag{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:3px 8px}
+.gold{color:var(--gold);border-color:#4a3d22}
+.meta select,.meta input{padding:4px 8px;font-size:12px;border-radius:8px;width:auto}
+.meta input[type=number]{width:70px}
+.x{border:0;background:none;color:var(--mut);font-size:20px;cursor:pointer;padding:0 4px}
+.add{background:var(--gold);color:#111;border:0;border-radius:12px;padding:10px 16px;font:600 14px Inter;cursor:pointer}
+.form{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.form label{font-size:12px;color:var(--mut);display:flex;flex-direction:column;gap:3px}
+.form .full{grid-column:1/-1}
+.row{display:flex;align-items:center;gap:6px;flex-direction:row!important;color:var(--ink)!important}
+.row input[type=number]{width:70px}
+.bar{height:6px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:var(--gold)}
+.empty{text-align:center;color:var(--mut);padding:26px 10px;border:1px dashed var(--line);border-radius:14px}
+.ok{color:var(--ok)}.warn{color:var(--warn)}
+.tl{border-left:2px solid var(--gold);margin-left:6px;padding-left:12px}
+h2{font:700 26px Cormorant Garamond,Georgia,serif;color:var(--gold);margin:18px 0 4px}
+h4{margin:14px 0 4px;color:var(--ink);font:600 15px Inter}
+.cur{width:54px!important;text-align:center}
+
+body{background:radial-gradient(800px 480px at 8% -8%,#3b2a0f,transparent 60%),radial-gradient(700px 500px at 100% 5%,#2b0f1f,transparent 55%),#06060a;background-attachment:fixed}
+h1{font-size:44px;background:linear-gradient(90deg,#f7e7bd,#d4af6a,#b07a3a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.card,.stat,.ev,.form,.bx{background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(10px);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.card{transition:.2s}.card:hover{border-color:rgba(212,175,106,.5);transform:translateY(-2px)}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#app>*{animation:up .45s both}
+nav{background:rgba(6,6,10,.75);backdrop-filter:blur(14px)}
+nav button{border-radius:14px;padding:8px 14px}nav button.on{background:linear-gradient(135deg,#f0d9a0,#b98a3e);box-shadow:0 4px 18px rgba(212,175,106,.35)}
+.orn{display:flex;align-items:center;gap:10px;justify-content:center;color:var(--gold)}.orn:before,.orn:after{content:"";height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold))}.orn:after{transform:scaleX(-1)}
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;margin:12px 0}.b4{grid-column:span 4}.b6{grid-column:span 6}.b12{grid-column:1/-1}
+@media(max-width:720px){.b4,.b6{grid-column:1/-1}}
+.bx{border-radius:20px;padding:16px}.bx h5{margin:0 0 10px;font:600 11px Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.hero2{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:radial-gradient(circle at 85% 30%,rgba(212,175,106,.22),transparent 55%),linear-gradient(145deg,#1a1408,#0e0e12);border-color:rgba(212,175,106,.4)}
+.mono{font:700 54px Cormorant Garamond,Georgia,serif;color:var(--gold);line-height:1}
+.pill{display:inline-block;margin:8px 6px 0 0;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);font-size:12px}
+.ring{position:relative;flex:none}.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.rb{fill:none;stroke:rgba(255,255,255,.08);stroke-width:3}.rf{fill:none;stroke:url(#g);stroke-width:3;stroke-linecap:round;transition:stroke-dasharray 1.2s}.rf.r{stroke:url(#g2)}
+.ring div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring b{font:700 24px Cormorant Garamond,Georgia,serif;line-height:1}.ring small{font-size:10px;color:var(--mut);margin-top:2px}
+.rw{display:flex;align-items:center;gap:14px}.rw p{margin:2px 0;font-size:12px;color:var(--mut)}.rw p b{color:var(--ink)}
+.ico{font-size:26px}
+.hbr{display:grid;grid-template-columns:100px 1fr 80px;gap:8px;align-items:center;font-size:12px;margin:8px 0}.hbr em{font-style:normal;text-align:right;color:var(--mut)}
+.hb{height:9px;background:rgba(255,255,255,.07);border-radius:9px;overflow:hidden}.hb i{display:block;height:100%;background:rgba(212,175,106,.3);border-radius:9px}.hb u{display:block;height:100%;background:linear-gradient(90deg,#f0d9a0,#b98a3e);border-radius:9px}
+.stack{display:flex;height:14px;border-radius:9px;overflow:hidden;gap:2px}.stack i{display:block}
+.lg{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--mut);margin-top:10px}.lg span:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:5px}
+.up{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}.up:last-child{border:0}
+.chip.on{background:linear-gradient(135deg,#f0d9a0,#b98a3e)}.add{background:linear-gradient(135deg,#f0d9a0,#b98a3e);box-shadow:0 4px 16px rgba(212,175,106,.3)}
+
+h1,h2{font-family:'Playfair Display',Georgia,serif;font-weight:700}h1{font-size:36px}h2{font-size:24px}
+body{font-feature-settings:'tnum';letter-spacing:.005em}
+.bento{gap:14px}.bx{padding:20px;border-radius:24px}.bx h5{letter-spacing:.2em;font-size:10.5px;display:flex;align-items:center;gap:8px}.bx h5:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(212,175,106,.35),transparent)}
+.hero2{padding:28px 26px}.eyebrow{letter-spacing:.38em;text-transform:uppercase;font:600 10.5px Inter;color:var(--gold)}
+.script{font:400 clamp(42px,9vw,68px) 'Great Vibes',cursive;color:#f7e7bd;line-height:1.15;margin:8px 0 4px}.script span{color:var(--gold);font-size:.55em;padding:0 8px}
+.ring b{font:600 24px 'Playfair Display',Georgia,serif}.hero2 .ring b{font-size:44px}
+.rw p{font-size:12.5px;margin:3px 0}.rw p b{font:600 15px 'Playfair Display',Georgia,serif}
+.pill{backdrop-filter:blur(6px);border-color:rgba(212,175,106,.3)}
+.att{position:relative;display:inline-flex}.att img{width:58px;height:58px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}.att a{font-size:32px;text-decoration:none}
+.att .x{position:absolute;top:-7px;right:-7px;background:#000;border:1px solid var(--line);border-radius:50%;width:18px;height:18px;font-size:12px;line-height:1;padding:0;color:#fff}
+.mv{font-size:11px!important}
+.stat b.warn{color:var(--warn)}.stat b.ok{color:var(--ok)}.bulk{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 4px;padding:8px 10px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04)}.chip[disabled]{opacity:.35;pointer-events:none}.cds{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}.cdc{text-align:center}.cdc .ring{margin:8px auto 0}.tk{font:600 13px Inter;color:var(--gold);margin-top:8px;letter-spacing:.05em;font-variant-numeric:tabular-nums}.hero2 .ring b{font-size:34px}
+.authbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 4px;padding:8px 10px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.035);backdrop-filter:blur(10px)}
+.authleft{display:flex;align-items:center;gap:8px;min-width:0}.authname{font-size:12px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.authbadge{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.1)}.authbadge.viewer{color:var(--mut)}.authbadge.editor{color:#111;background:var(--gold);border-color:var(--gold)}
+.authbtn{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 11px;border-radius:10px;font:600 12px Inter;cursor:pointer}.authbtn.primary{background:linear-gradient(135deg,#f0d9a0,#b98a3e);color:#111;border-color:transparent}.authbtn.danger{color:var(--warn)}
+.authmodal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}.authmodal.on{display:flex}.authbox{width:min(420px,100%);background:#111216;border:1px solid rgba(212,175,106,.35);border-radius:20px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.5)}.authbox h3{margin:0 0 8px;color:var(--gold);font:700 26px 'Playfair Display',Georgia,serif}.authbox p{font-size:12px;color:var(--mut);margin:0 0 14px}.authbox label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--mut);margin:9px 0}.authbox input{width:100%}.authactions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.accesslist{max-height:230px;overflow:auto;margin-top:12px;border-top:1px solid var(--line)}.accessrow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}.accessrow span{overflow:hidden;text-overflow:ellipsis}.setupnote{font-size:12px;color:var(--warn);padding:8px 10px;border:1px dashed rgba(251,146,60,.4);border-radius:12px;margin:7px 0}
+body:not(.editor) .mutate-only{display:none!important}body:not(.editor) #n1,body:not(.editor) #n2,body:not(.editor) #dt,body:not(.editor) #cur{pointer-events:none;opacity:.85}
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script></head><body><svg width="0" height="0" style="position:absolute"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7e7bd"/><stop offset="1" stop-color="#b07a3a"/></linearGradient><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4a1ac"/><stop offset="1" stop-color="#b02a46"/></linearGradient></defs></svg><div class="wrap">
+<div class="authbar"><div class="authleft"><span id="authBadge" class="authbadge viewer">VIEW ONLY</span><span id="authName" class="authname">Public access</span></div><div style="display:flex;gap:6px;align-items:center"><button id="accessBtn" class="authbtn mutate-only" style="display:none">⚙ Access</button><button id="authBtn" class="authbtn primary">🔐 Sign in</button></div></div>
+<div id="setupNote" class="setupnote" style="display:none"></div>
+<header><div class="orn">✝ ❀ ✝</div><h1>Our Wedding Planner</h1>
+<div class="sub">Roce · Wedding (Nuptials at Church + Reception at Hall) · v10</div>
+<div class="names"><input id="n1" placeholder="Bride"> <span>&</span> <input id="n2" placeholder="Groom"> <input id="dt" type="date" title="Wedding date"> <input id="cur" class="cur" title="Currency"></div></header>
+<div class="sub" id="sync" style="text-align:center;margin:4px 0">Local only</div><nav id="nav"></nav><div id="app"></div></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// ===== Shared website configuration =====
+const SUPABASE_URL='PASTE_SUPABASE_PROJECT_URL';
+const SUPABASE_ANON_KEY='PASTE_SUPABASE_PUBLISHABLE_KEY';
+let SB=null,SESSION=null,CAN_EDIT=false,IS_ADMIN=false,realtime=null;
+const SUPABASE_READY=()=>typeof window.supabase!=='undefined' && SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PASTE_') && !SUPABASE_ANON_KEY.includes('PASTE_');
+const showAuth=(on=true)=>$('#authModal').classList.toggle('on',on);
+const showAccess=(on=true)=>{$('#accessModal').classList.toggle('on',on);if(on)loadEditors()};
+const setAuthMsg=t=>$('#authMsg').textContent=t||'';
+const setAccessMsg=t=>$('#accessMsg').textContent=t||'';
+function updateAuthUI(){const badge=$('#authBadge'),name=$('#authName'),btn=$('#authBtn'),ab=$('#accessBtn');if(!SESSION){badge.textContent='VIEW ONLY';badge.className='authbadge viewer';name.textContent='Public access';btn.textContent='🔐 Sign in';ab.style.display='none';}else if(CAN_EDIT){badge.textContent=IS_ADMIN?'EDITOR · ADMIN':'EDITOR';badge.className='authbadge editor';name.textContent=SESSION.user.email||'Signed in';btn.textContent='↪ Sign out';ab.style.display=IS_ADMIN?'inline-block':'none';}else{badge.textContent='SIGNED IN · VIEW ONLY';badge.className='authbadge viewer';name.textContent=SESSION.user.email||'Signed in';btn.textContent='↪ Sign out';ab.style.display='none';}document.body.classList.toggle('editor',CAN_EDIT);}
+async function refreshAccess(){if(!SB){SESSION=null;CAN_EDIT=false;IS_ADMIN=false;updateAuthUI();return}const {data:{session}}=await SB.auth.getSession();SESSION=session||null;CAN_EDIT=false;IS_ADMIN=false;if(SESSION?.user?.email){const em=SESSION.user.email.toLowerCase();const er=await SB.from('planner_editors').select('email,active').eq('email',em).eq('active',true).maybeSingle();CAN_EDIT=!!er.data&&!er.error;if(CAN_EDIT){const ar=await SB.from('planner_admins').select('email,active').eq('email',em).eq('active',true).maybeSingle();IS_ADMIN=!!ar.data&&!ar.error;}}updateAuthUI();}
+async function signIn(){if(!SB)return setAuthMsg('Finish the Supabase setup first.');setAuthMsg('Signing in…');const {error}=await SB.auth.signInWithPassword({email:$('#authEmail').value.trim(),password:$('#authPassword').value});if(error)return setAuthMsg(error.message);setAuthMsg('Signed in.');showAuth(false);await refreshAccess();await loadShared();render();}
+async function signUp(){if(!SB)return setAuthMsg('Finish the Supabase setup first.');const email=$('#authEmail').value.trim(),password=$('#authPassword').value;if(!email||password.length<6)return setAuthMsg('Enter a valid email and a password of at least 6 characters.');setAuthMsg('Creating account…');const {error}=await SB.auth.signUp({email,password});if(error)return setAuthMsg(error.message);setAuthMsg('Account created. Verify your email if required, then sign in. An admin must still approve edit access.');}
+async function signOut(){if(SB)await SB.auth.signOut();SESSION=null;CAN_EDIT=false;IS_ADMIN=false;updateAuthUI();showAccess(false);render();}
+async function loadShared(){if(!SB)return;stat('Loading shared planner…');const {data,error}=await SB.from('planner_data').select('data').eq('id','main').maybeSingle();if(error){stat('⚠ Shared data unavailable: '+error.message);return}if(data?.data){D=data.data;fill();try{localStorage.setItem('wp-mcw2',JSON.stringify(D))}catch(e){}stat(CAN_EDIT?'● Shared · editor':'● Shared · view only')}else{stat(CAN_EDIT?'● Ready to publish planner':'● Waiting for planner data');if(CAN_EDIT)await save(true)}}
+async function save(force=false){try{localStorage.setItem('wp-mcw2',JSON.stringify(D))}catch(e){}if(!SB||!CAN_EDIT){if(!SB)stat('Local only · finish Supabase setup to share');return}clearTimeout(tmr);tmr=setTimeout(async()=>{stat('Saving shared planner…');const {error}=await SB.from('planner_data').upsert({id:'main',data:JSON.parse(JSON.stringify(D)),updated_at:new Date().toISOString()},{onConflict:'id'});stat(error?'⚠ Save failed: '+error.message:'● Saved & shared')},700)}
+async function subscribeShared(){if(!SB||realtime)return;realtime=SB.channel('planner-live').on('postgres_changes',{event:'*',schema:'public',table:'planner_data',filter:'id=eq.main'},payload=>{if(!payload.new?.data)return;if(JSON.stringify(payload.new.data)===JSON.stringify(D))return;D=payload.new.data;fill();try{localStorage.setItem('wp-mcw2',JSON.stringify(D))}catch(e){}if(!showForm)render();stat(CAN_EDIT?'● Synced':'● Updated')}).subscribe()}
+async function loadEditors(){if(!SB||!IS_ADMIN)return;const {data,error}=await SB.from('planner_editors').select('email,active').order('email');const el=$('#accessList');if(error){el.textContent=error.message;return}el.innerHTML=(data||[]).map(x=>`<div class="accessrow"><span>${esc(x.email)}</span><button class="authbtn danger" data-revoke-email="${esc(x.email)}">Revoke</button></div>`).join('')||'<div class="sub" style="padding:10px 0">No editors yet.</div>'}
+async function grantEditor(){if(!SB||!IS_ADMIN)return;const email=$('#grantEmail').value.trim().toLowerCase();if(!email)return setAccessMsg('Enter an email.');setAccessMsg('Granting…');const {error}=await SB.rpc('grant_planner_editor',{p_email:email});if(error)return setAccessMsg(error.message);$('#grantEmail').value='';setAccessMsg('Edit access granted.');loadEditors()}
+async function revokeEditor(email){if(!SB||!IS_ADMIN)return;const {error}=await SB.rpc('revoke_planner_editor',{p_email:email});if(error)return setAccessMsg(error.message);loadEditors()}
+
+const ALL=['Roce','Nuptials','Reception'],EVO=[...ALL,'General'],EV={Roce:['Roce'],Wedding:['Nuptials','Reception']};
+const L={Roce:'Roce',Nuptials:'Nuptials (Church)',Reception:'Reception (Hall)',General:'General'};
+const SIDES=["Dad's","Mom's","Brother's","Groom's","Bride's","Mutual"],RS=['Pending','Attending','Declined'];
+const sel=(k,l,o,e)=>({k,l,t:'sel',o,e}),txt=(k,l)=>({k,l,t:'text'}),num=(k,l,e)=>({k,l,t:'num',e});
+const S={
+guests:{t:'Guests & RSVP',f:[]},itin:{t:'Itinerary',f:[]},
+menu:{t:'Catering Menu',f:[txt('dish','Dish / Item'),sel('ev','Event',ALL),sel('course','Course',['Welcome drink','Starter','Main – Non-veg','Main – Veg','Rice / Bread','Dessert','Beverage','Other']),txt('qty','Qty / servings'),txt('note','Notes')]},
+vendors:{t:'Vendors & Payments',f:[txt('name','Vendor / Person'),sel('role','Role',['Caterer','MC / Emcee','Choir','Church / Parish','Hall / Venue','Band / DJ','Photo / Video','Decor / Flowers','Bridal wear','Makeup & Hair','Cake','Transport','Invitations','Other']),sel('ev','Event',EVO),txt('phone','Phone'),num('total','Total agreed'),num('paid','Advance / paid so far',1),{k:'due',l:'Balance due on',t:'date'},{k:'settled',l:'✔ Full payment done',t:'bool'}]},
+items:{t:'Items Needed',f:[txt('item','Item'),sel('ev','Event',EVO),txt('qty','Qty'),txt('who','Responsible'),sel('status','Status',['Needed','Ordered','Bought','Packed'],1)]},
+todo:{t:'To-Do',f:[txt('task','Task'),sel('ev','Event',EVO),{k:'due',l:'Due',t:'date'},{k:'done',l:'Done',t:'bool'}]},
+gifts:{t:'Gifts Received',f:[txt('from','From'),txt('gift','Gift / Cash'),sel('ev','Event',EVO),num('value','Value (optional)'),{k:'thanked',l:'Thank-you sent',t:'bool'}]},
+notes:{t:'Notes',f:[txt('title','Title'),sel('ev','Event',EVO),{k:'text',l:'Note',t:'area'}]}};
+const mk=(a,fn)=>a.map(x=>fn(...x));
+const seed=()=>({a:'',b:'',date:'',cur:'₹',evd:{},guests:[],vendors:[],menu:[],gifts:[],notes:[],
+itin:mk([['Roce','10:00','Blessing by parents & elders','Home'],['Roce','10:30','Anointing with coconut milk & oil','Home'],['Roce','11:30','Konkani songs, dance & bath','Home'],['Roce','13:00','Roce lunch with family & guests','Home / Hall'],
+['Nuptials','08:00','Bride & groom get ready','Respective homes'],['Nuptials','10:00','Procession & arrival at church','Parish church'],['Nuptials','10:30','Nuptial Mass & exchange of vows','Parish church'],['Nuptials','12:00','Register signing & family photos','Church'],
+['Reception','18:00','Guests arrive, welcome drinks','Hall'],['Reception','19:00','Grand entry, toast & cake cutting','Hall'],['Reception','20:00','Dinner & dance','Hall'],['Reception','22:30','Send-off','Hall']],(ev,time,what,where)=>({ev,time,what,where})),
+items:mk([['Roce','Coconut milk & coconut oil','Plenty'],['Roce','Mango leaves & flowers','1 set'],['Roce','Towels & new clothes','2 sets'],['Nuptials','Wedding rings & ring cushion','1'],['Nuptials','Baptism / marriage documents','1 set'],['Nuptials','Bouquet & church flowers',''],['Nuptials','Candles, booklets for Mass',''],['Reception','Cake knife & cake stand','1'],['Reception','Guest book & return gifts','']],(ev,item,qty)=>({ev,item,qty,who:'',status:'Needed'})),
+todo:mk([['Book parish church & meet the priest','Nuptials'],['Complete Pre-Cana course','Nuptials'],['Collect baptism & confirmation certificates','Nuptials'],['Book reception hall','Reception'],['Finalise caterer menu & tasting','Reception'],['Plan Roce date, venue & menu','Roce'],['Book choir for the Mass','Nuptials'],['Order & send invitations','General']],(task,ev)=>({task,ev,due:'',done:false}))});
+let D;try{D=JSON.parse(localStorage.getItem('wp-mcw2'))}catch(e){}D=D||seed();
+const fill=()=>{D.evd=D.evd||{};D.guests.forEach(g=>{const a=g.inv.Nuptials,b=g.inv.Reception;if(a||b){const x=a||b;g.inv.Wedding=g.inv.Wedding||{rsvp:x.rsvp,n:Math.max(a?+a.n:0,b?+b.n:0)||1};delete g.inv.Nuptials;delete g.inv.Reception}});D.date=D.date||'2026-12-05';[['Roce','2026-12-03'],['Nuptials','2026-12-05'],['Reception','2026-12-05']].forEach(([e,d])=>{D.evd[e]=D.evd[e]||{};D.evd[e].date=D.evd[e].date||d})};fill();
+let tmr,pend=false;
+const mv=(sec,i)=>`<button class="x mv" data-mv="${sec}" data-i="${i}" data-dir="-1" title="Move up">▲</button><button class="x mv" data-mv="${sec}" data-i="${i}" data-dir="1" title="Move down">▼</button>`;
+const att=(v,i)=>{const fs=v.files||[];return `<div class="meta" style="margin-top:10px">${fs.map((f,j)=>`<span class="att"><a href="/_blob/${f.id}" target="_blank" rel="noopener" title="${esc(f.name)}">${f.pdf?'📄':`<img src="/_blob/${f.id}" alt="">`}</a><button class="x" data-rmf="${i}" data-j="${j}" title="Remove">×</button></span>`).join('')}<label class="chip" style="border-color:var(--gold);color:var(--gold)">📎 ${fs.length?'Add more':'Attach invoice / receipt'}<input type="file" hidden multiple accept="image/*,application/pdf" data-up="${i}"></label>${fs.length?`<span class="sub">${fs.length} attached</span>`:''}</div>`};
+async function upload(i,fl){if(!CAN_EDIT)return alert('Sign in with editor access to upload files.');return alert('Receipt attachments will be enabled in the storage step after the shared database is connected.');}
+function move(sec,i,dir){const A=D[sec],c=A[i],idx=A.map((x,k)=>k).filter(k=>sec==='itin'?A[k].ev===c.ev:sec==='guests'?(gIn(A[k])&&(sf==='All'||A[k].side===sf)):inEv(A[k])),q=idx[idx.indexOf(i)+dir];if(q===undefined)return;[A[i],A[q]]=[A[q],A[i]];save()}
+async function importXL(f){if(!f)return;if(typeof XLSX==='undefined')return alert('Excel reader could not load.');
+try{const wb=XLSX.read(await f.arrayBuffer()),rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''}),out=[];
+rows.forEach(r=>{const o={};Object.keys(r).forEach(k=>o[k.toLowerCase().trim()]=r[k]);
+const name=String(o.name||o['guest name']||o.family||'').trim();if(!name)return;
+const def=Math.max(1,parseInt(o.guests||o['no. of guests']||o.count)||1),sd=String(o.side||'').toLowerCase();
+const side=SIDES.find(x=>sd&&sd.startsWith(x.slice(0,3).toLowerCase()))||'Mutual';
+const cols={Roce:o.roce,Wedding:o.wedding??o.church??o.nuptials??o.reception??o.hall},has=Object.values(cols).some(v=>v!==undefined),inv={};
+GEV.forEach(e=>{let v=has?cols[e]:'y';v=String(v??'').trim().toLowerCase();if(!v||['0','no','n','-'].includes(v))return;inv[e]={rsvp:RS.find(x=>x.toLowerCase()===String(o.rsvp||'').toLowerCase())||'Pending',n:parseInt(v)||def}});
+if(Object.keys(inv).length)out.push({name,side,phone:String(o.phone||o.mobile||''),addr:String(o.address||''),sent:/^(y|yes|true|1|sent|✓)/i.test(String(o.sent||o['invitation sent']||'')),remark:side==='Mutual'?String(o.remark||o.remarks||''):'',inv})});
+if(!out.length)return alert('No guests found. Use columns: Name, Side, Phone, Address, Roce, Wedding, Guests.');
+if(!confirm('Import '+out.length+' invites?'))return;D.guests.push(...out);save();render()}catch(e){alert('Could not read that file.')}}
+const stat=t=>{const s=$('#sync');if(s)s.textContent=t};
+let tab='home',flt='All',sf='All',showForm=false,ed=null;const selG=new Set();
+const m=n=>D.cur+Number(n||0).toLocaleString(),grp=()=>flt==='All'?null:EV[flt];
+const inEv=it=>!grp()||grp().includes(it.ev);
+const GEV=['Roce','Wedding'],gk=e=>e==='Roce'?'Roce':'Wedding',gIn=g=>flt==='All'||!!g.inv[flt];L.Wedding='Wedding (Nuptials + Reception)';
+const sum=(g,e,r)=>{const k=gk(e);return D.guests.filter(x=>x.inv[k]&&(!r||x.inv[k].rsvp===r)).reduce((s,x)=>s+ +x.inv[k].n,0)};
+function nav(){$('#nav').innerHTML=[['home','🏠 Overview'],['guests','👥 Guests'],['itin','🗓 Itinerary'],['menu','🍽 Menu'],['vendors','💳 Vendors & Pay'],['items','🧳 Items'],['todo','✅ To-Do'],['gifts','🎁 Gifts'],['notes','📝 Notes']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-tab="${k}">${l}</button>`).join('')}
+const ring=(p,big,small,sz=92,c='')=>`<div class="ring" style="width:${sz}px;height:${sz}px"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" class="rb"/><circle cx="18" cy="18" r="15.9" class="rf ${c}" stroke-dasharray="${Math.min(100,Math.max(0,p||0))} 100"/></svg><div><b>${big}</b><small>${small}</small></div></div>`;
+const fmt=d=>d?new Date(d+'T00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}):'Set date';
+const dd=d=>d?Math.ceil((new Date(d)-new Date(new Date().toDateString()))/864e5):null;
+function home(){
+const days=dd(D.date),tot=D.vendors.reduce((s,p)=>s+ +p.total,0),paid=D.vendors.reduce((s,p)=>s+ +p.paid,0),open=D.todo.filter(t=>!t.done).length,pct=D.todo.length?Math.round(100*(D.todo.length-open)/D.todo.length):0;
+const ini=((D.a||'B')[0]+' & '+(D.b||'G')[0]).toUpperCase(),rp=days===null?0:days<=0?100:Math.max(3,100-days/365*100);
+const ev3=[['Roce','🥥','Coconut-milk anointing'],['Nuptials','⛪','Nuptial Mass'],['Reception','🥂','Dinner & dance']];
+const roles={};D.vendors.forEach(v=>{const r=roles[v.role]=roles[v.role]||{t:0,p:0};r.t+=+v.total;r.p+=+v.paid});
+const rows=Object.entries(roles).sort((a,b)=>b[1].t-a[1].t).slice(0,6),mx=Math.max(1,...rows.map(r=>r[1].t));
+const st=[['Needed','#fb923c'],['Ordered','#60a5fa'],['Bought','#d4af6a'],['Packed','#4ade80']],cnt=st.map(([k])=>D.items.filter(i=>i.status===k).length);
+const ups=D.todo.filter(t=>!t.done).sort((a,b)=>(a.due||'9').localeCompare(b.due||'9')).slice(0,5);
+const gi=GEV.reduce((s,e)=>s+sum(0,e),0),ga=GEV.reduce((s,e)=>s+sum(0,e,'Attending'),0);
+const fmtw=d=>d?new Date(d+'T00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'}):'Set date',rd=D.evd.Roce&&D.evd.Roce.date,tg=(dt,tm)=>dt?new Date(dt+'T'+(tm||'10:00')):null;
+window.CDT={Roce:tg(rd,D.evd.Roce&&D.evd.Roce.time),Wedding:tg(D.date,D.evd.Nuptials&&D.evd.Nuptials.time)};
+const cdc=(k,ic,lb,dt,c)=>{const n=dd(dt),p=n===null?0:n<=0?100:Math.max(3,100-n/180*100);return `<div class="cdc"><div class="eyebrow" style="letter-spacing:.2em">${ic} ${lb}</div>${ring(p,n===null?'—':n>0?n:n===0?'🎉':'💍',n>0?'days to go':n===0?'Today!':'Done',124,c)}<div class="tk" data-cd="${k}"></div></div>`};
+const today=new Date().toISOString().slice(0,10),in14=new Date(Date.now()+14*864e5).toISOString().slice(0,10);
+const alerts=[[D.guests.filter(g=>!g.sent).length,'✉','invitations to send','guests'],[D.guests.filter(g=>g.sent&&GEV.some(e=>g.inv[e]&&g.inv[e].rsvp==='Pending')).length,'📨','RSVPs awaited','guests'],[D.todo.filter(t=>!t.done&&t.due&&t.due<today).length,'⏰','overdue tasks','todo'],[D.vendors.filter(v=>!v.settled&&v.due&&v.due<=in14&&v.total-v.paid>0).length,'💳','payments due in 14 days','vendors'],[D.items.filter(i=>i.status==='Needed').length,'🧳','items still needed','items']].filter(a=>a[0]>0);
+return `<div class="bento"><div class="bx hero2 b12"><div style="min-width:220px"><div class="eyebrow">Save the date</div><div class="script">${esc(D.a||'Bride')} <span>&</span> ${esc(D.b||'Groom')}</div><span class="pill">🥥 Roce · ${fmtw(rd)}</span><span class="pill">⛪ Wedding · ${fmtw(D.date)}</span></div><div class="cds">${cdc('Roce','🥥','Roce',rd,'r')}${cdc('Wedding','⛪','Wedding',D.date,'')}</div></div>
+<div class="bx b12"><h5>Needs attention</h5><div class="meta" style="margin:0">${alerts.length?alerts.map(a=>`<button class="chip" data-tab="${a[3]}" style="font-size:13px;padding:8px 14px">${a[1]} <b style="color:var(--gold)">${a[0]}</b> ${a[2]}</button>`).join(''):'<span class="sub">All caught up ✨</span>'}</div></div>
+<div class="bx b4"><h5>Budget</h5><div class="rw">${ring(tot?100*paid/tot:0,tot?Math.round(100*paid/tot)+'%':'—','paid')}<div><p><b>${m(tot-paid)}</b> still due</p><p>${m(paid)} paid of ${m(tot)}</p></div></div></div>
+<div class="bx b4"><h5>Tasks</h5><div class="rw">${ring(pct,pct+'%','done',92,'r')}<div><p><b>${open}</b> tasks open</p><p>${D.todo.length-open} completed</p></div></div></div>
+<div class="bx b4"><h5>Guests</h5><div class="rw">${ring(gi?100*ga/gi:0,ga,'confirmed')}<div><p><b>${D.guests.length}</b> invites</p><p>${gi} headcount invited</p></div></div></div>
+${ev3.map(([e,ic,t])=>{const d=D.evd[e]||{},n=dd(d.date),i=sum(0,e);return `<div class="bx b4"><h5>${L[e]}</h5><div class="rw">${ring(i?100*sum(0,e,'Attending')/i:0,sum(0,e,'Attending'),'of '+i,76)}<div><div class="ico">${ic}</div><p><b>${t}</b></p><p>${n===null?'Date not set':n>0?'in '+n+' days':n===0?'Today':'Done'} · ${sum(0,e,'Pending')} pending</p><p>📋 ${D.itin.filter(x=>x.ev===e).length} steps · ✅ ${D.todo.filter(x=>x.ev===e&&!x.done).length} open</p></div></div></div>`}).join('')}
+<div class="bx b6"><h5>Spend by vendor type</h5>${rows.length?rows.map(([r,v])=>`<div class="hbr"><span>${r}</span><div class="hb"><i style="width:${100*v.t/mx}%"><u style="width:${v.t?100*v.p/v.t:0}%"></u></i></div><em>${m(v.t)}</em></div>`).join('')+'<div class="lg"><span style="--c:#d4af6a">Paid</span><span style="--c:#6b5628">Total</span></div>':'<div class="empty">Add vendors to see your budget split.</div>'}</div>
+<div class="bx b6"><h5>Up next</h5>${ups.length?ups.map(t=>`<div class="up"><span>${esc(t.task)}</span><span class="tag gold">${t.due?fmt(t.due):L[t.ev]}</span></div>`).join(''):'<div class="empty">All tasks done 🎉</div>'}
+<h5 style="margin-top:16px">Items checklist</h5>${D.items.length?`<div class="stack">${st.map(([k,c],i)=>cnt[i]?`<i style="flex:${cnt[i]};background:${c}"></i>`:'').join('')}</div><div class="lg">${st.map(([k,c],i)=>`<span style="--c:${c}">${k} ${cnt[i]}</span>`).join('')}</div>`:''}</div></div>`}
+function field(f,it,i,sec){const v=it[f.k],a=`data-sec="${sec}" data-i="${i}" data-k="${f.k}"`;
+if(f.t==='bool')return `<label class="tag"><input type="checkbox" ${a} ${v?'checked':''}> ${f.l}</label>`;
+if(f.e)return f.t==='sel'?`<select ${a}>${f.o.map(o=>`<option ${o===v?'selected':''}>${o}</option>`).join('')}</select>`:`<span>${f.l}:</span><input type="number" ${a} value="${v||0}">`;
+if(f.t==='area'||(!v&&v!==0))return '';
+let val=['total','value'].includes(f.k)?'Total '+m(v):v;if(f.k==='ev')val=L[v];if(f.k==='due')val='Due '+v;
+return `<span class="tag ${f.k==='ev'?'gold':''}">${esc(val)}</span>`}
+function inp(x,sec){const id='f_'+x.k;return `<label class="${x.t==='area'?'full':''}">${x.l}${
+x.t==='sel'?`<select id="${id}">${(sec==='itin'?EV[flt]:x.o).map(o=>`<option value="${o}">${L[o]||o}</option>`).join('')}</select>`:
+x.t==='area'?`<textarea id="${id}" rows="3"></textarea>`:x.t==='bool'?`<input type="checkbox" id="${id}">`:
+`<input id="${id}" type="${x.t==='num'?'number':x.t}">`}</label>`}
+function gOver(){const G=D.guests,hc=g=>Math.max(0,...GEV.map(e=>g.inv[e]?+g.inv[e].n:0)),live=G.filter(g=>GEV.some(e=>g.inv[e]&&g.inv[e].rsvp!=='Declined')),
+exp=live.reduce((s,g)=>s+hc(g),0),sent=live.filter(g=>g.sent).reduce((s,g)=>s+hc(g),0),pend=exp-sent,pc=exp?Math.round(100*sent/exp):0,
+conf=G.reduce((s,g)=>s+Math.max(0,...GEV.map(e=>g.inv[e]&&g.inv[e].rsvp==='Attending'?+g.inv[e].n:0)),0);
+return `<div class="grid"><div class="stat"><b>${exp}</b><span>Total guests expected · ${live.length} invites</span></div><div class="stat"><b>${sent}</b><span>Invited · invitation sent</span><div class="bar"><i style="width:${pc}%"></i></div></div><div class="stat"><b class="warn">${pend}</b><span>Pending to invite</span></div><div class="stat"><b class="ok">${conf}</b><span>RSVP confirmed</span><div class="bar"><i style="width:${exp?100*conf/exp:0}%"></i></div></div></div><div class="meta" style="margin:0 0 6px">${GEV.map(e=>`<span class="tag gold">${L[e]}: ${sum(0,e)-sum(0,e,'Declined')} expected · ${sum(0,e,'Attending')} confirmed · ${sum(0,e,'Pending')} awaiting RSVP</span>`).join('')}</div>`}
+function guests(items){let h=gOver()+`<div class="chips"><label class="chip">⬆ Import from Excel / CSV<input type="file" hidden id="xl" accept=".xlsx,.xls,.csv"></label><span class="sub">Columns: Name · Side · Phone · Address · Roce · Wedding · Guests · Sent</span></div><div class="chips">${['All',...SIDES].map(s=>`<button class="chip ${sf===s?'on':''}" data-sf="${s}">${s}</button>`).join('')}</div>`;
+if(showForm)h+=`<div class="form">${inp(txt('name','Name / Family'))}<label>Side<select id="g_side">${SIDES.map(s=>`<option>${s}</option>`).join('')}</select></label><label id="g_rem_w" style="display:none">Remark (for Mutual)<input id="f_remark" placeholder="e.g. Family friend, colleague, neighbour"></label>${inp(txt('phone','Phone'))}<label class="full">Address<textarea id="f_addr" rows="2"></textarea></label><div class="full" style="color:var(--mut);font-size:12px">Invited to · number of guests</div>${GEV.map(e=>`<label class="row"><input type="checkbox" id="g_on_${e}" ${flt===e?'checked':''}> ${L[e]} <input type="number" id="g_n_${e}" value="1" min="1"></label>`).join('')}<label class="row full"><input type="checkbox" id="g_sent"> ✉ Invitation sent</label><button class="add full" data-save>${ed!==null?'✓ Update guest':'Save guest'}</button>${ed!==null?'<button class="chip full" data-cancel>Cancel</button>':''}</div>`;
+items=items.filter(x=>sf==='All'||x.it.side===sf);
+{const n=items.filter(x=>selG.has(x.it)).length,all=items.length&&n===items.length,dis=n?'':'disabled';h+=`<div class="bulk"><label class="tag" style="cursor:pointer"><input type="checkbox" id="selall" ${all?'checked':''}> Select all (${items.length})</label><span class="sub">${n} selected · showing ${items.length} of ${D.guests.length}</span><span style="flex:1"></span><button class="chip" ${dis} data-bulk="up">▲ Up</button><button class="chip" ${dis} data-bulk="down">▼ Down</button><button class="chip" ${dis} data-bulk="sent">✉ Mark sent</button><button class="chip" ${dis} data-bulk="unsent">✉ Not sent</button><button class="chip" ${dis} data-bulk="del" style="color:var(--warn)">🗑 Delete</button></div>`}
+if(!items.length)return h+'<div class="empty">No guests yet. Tap “Add”.</div>';
+return h+items.map(({it,i})=>`<div class="card"><div class="top"><div style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" data-gs="${i}" ${selG.has(it)?'checked':''} style="margin-top:4px;width:18px;height:18px"><div><div class="t">${esc(it.name)}</div>${it.addr?`<div class="sub">📍 ${esc(it.addr)}</div>`:''}</div></div><span style="white-space:nowrap">${mv('guests',i)}<button class="x" data-edit="guests" data-i="${i}" title="Edit">✎</button><button class="x" data-del="guests" data-i="${i}" title="Delete">×</button></span></div>
+<div class="meta"><span class="tag gold">${it.side==='Mutual'&&it.remark?'Mutual – '+esc(it.remark):it.side+' side'}</span>${it.phone?`<span class="tag">${esc(it.phone)}</span>`:''}<label class="tag" style="cursor:pointer"><input type="checkbox" data-sec="guests" data-i="${i}" data-k="sent" ${it.sent?'checked':''}> ✉ Invitation sent</label></div>
+${GEV.filter(e=>it.inv[e]&&(flt==='All'||flt===e)).map(e=>`<div class="meta"><b style="min-width:120px">${L[e]}</b><select data-g="${i}" data-e="${e}" data-r="1">${RS.map(r=>`<option ${r===it.inv[e].rsvp?'selected':''}>${r}</option>`).join('')}</select><input type="number" min="1" data-g="${i}" data-e="${e}" value="${it.inv[e].n}"> guests</div>`).join('')}</div>`).join('')}
+function evd(){return grp().map(e=>{const d=D.evd[e]||{};return `<div class="ev"><h3>${L[e]} – details</h3><div class="form" style="border:0;padding:0;margin:6px 0 0">${[['date','Date','date'],['time','Start time','time'],['venue','Venue','text'],['addr','Address','text'],['contact','Contact person','text']].map(([k,l,t])=>`<label>${l}<input type="${t}" data-evd="${e}" data-k="${k}" value="${esc(d[k]||'')}"></label>`).join('')}<label class="full">Notes (dress code, parking…)<textarea rows="2" data-evd="${e}" data-k="notes">${esc(d.notes||'')}</textarea></label></div></div>`}).join('')}
+function list(sec){const s=S[sec];let items=D[sec].map((it,i)=>({it,i}));
+if(sec==='guests')items=items.filter(x=>gIn(x.it));else items=items.filter(x=>inEv(x.it));
+if(sec==='itin')items.sort((a,b)=>ALL.indexOf(a.it.ev)-ALL.indexOf(b.it.ev));
+if(sec==='menu')items.sort((a,b)=>S.menu.f[2].o.indexOf(a.it.course)-S.menu.f[2].o.indexOf(b.it.course));
+let h=`<h2>${s.t}</h2><div class="chips">${['All','Roce','Wedding'].filter(c=>!(sec==='itin'&&c==='All')).map(e=>`<button class="chip ${flt===e?'on':''}" data-flt="${e}">${e}</button>`).join('')}<span style="flex:1"></span><button class="add" data-add>＋ Add</button></div>`;
+if(sec==='itin')h+=evd()+'<h4>Chronology of events <button class="chip" data-sorttime style="margin-left:8px">⇅ Sort by time</button></h4>';
+if(sec==='guests')return h+guests(items);
+if(showForm)h+=`<div class="form">${s.f.map(x=>inp(x,sec)).join('')}<button class="add full" data-save>${ed!==null?'✓ Update':'Save'}</button>${ed!==null?'<button class="chip full" data-cancel>Cancel</button>':''}</div>`;
+if(sec==='vendors'){const a=items.reduce((s,x)=>s+ +x.it.total,0),p=items.reduce((s,x)=>s+ +x.it.paid,0);h+=`<div class="stat"><b>${m(a-p)} <small style="font-size:14px;color:var(--mut)">due</small></b><span>Total ${m(a)} · Advance/paid ${m(p)}</span><div class="bar"><i style="width:${a?100*p/a:0}%"></i></div></div>`}
+if(sec==='gifts')h+=`<div class="stat"><b>${m(items.reduce((s,x)=>s+ +x.it.value,0))}</b><span>${items.length} gifts · ${items.filter(x=>!x.it.thanked).length} thank-yous pending</span></div>`;
+if(!items.length)return h+'<div class="empty">Nothing here yet. Tap “Add”.</div>';
+if(sec==='itin'){let last='';items.forEach(({it,i})=>{if(it.ev!==last){h+=`${last?'</div>':''}<h4 style="color:var(--gold)">${L[it.ev]}</h4><div class="tl">`;last=it.ev}h+=`<div class="card"><div class="top"><div><span class="tag gold">${it.time}</span> <span class="t">${esc(it.what)}</span><div class="sub">${esc(it.where)}</div></div><span style="white-space:nowrap">${mv('itin',i)}<button class="x" data-edit="itin" data-i="${i}" title="Edit">✎</button><button class="x" data-del="itin" data-i="${i}" title="Delete">×</button></span></div></div>`});return h+'</div>'}
+return h+items.map(({it,i})=>{let st='';if(sec==='vendors'){const b=it.total-it.paid;st=it.settled?`<span class="tag ok">✔ Bill settled</span><input type="date" data-sec="vendors" data-i="${i}" data-k="settledOn" value="${it.settledOn||''}" title="Date of settlement">`:it.total?(b<=0?'<span class="tag ok">Paid in full</span>':`<span class="tag warn">Balance ${m(b)}</span>`):''}
+return `<div class="card ${sec==='todo'&&it.done?'done':''}"><div class="top"><div class="t">${esc(it[s.f[0].k])}</div><span style="white-space:nowrap">${['todo','notes'].includes(sec)?mv(sec,i):''}${sec==='vendors'?`<label class="x" title="Attach invoice / receipt" style="cursor:pointer">📎<input type="file" hidden multiple accept="image/*,application/pdf" data-up="${i}"></label>`:''}<button class="x" data-edit="${sec}" data-i="${i}" title="Edit">✎</button><button class="x" data-del="${sec}" data-i="${i}" title="Delete">×</button></span></div>${sec==='notes'?`<div class="sub" style="white-space:pre-wrap;margin-top:4px">${esc(it.text)}</div>`:''}<div class="meta">${s.f.slice(1).map(x=>field(x,it,i,sec)).join('')}${st}</div>${sec==='vendors'?att(it,i):''}</div>`}).join('')}
+const toggleRem=()=>{const w=$('#g_rem_w'),sd=$('#g_side');if(w&&sd)w.style.display=sd.value==='Mutual'?'':'none'};
+function tick(){document.querySelectorAll('[data-cd]').forEach(el=>{const t=window.CDT&&window.CDT[el.dataset.cd];if(!t||isNaN(t)){el.textContent='Set date in Itinerary';return}const ms=t-new Date();if(ms<=0){el.textContent='🎉 Underway / done';return}el.textContent=Math.floor(ms/36e5)%24+'h '+Math.floor(ms/6e4)%60+'m '+Math.floor(ms/1e3)%60+'s'})}
+setInterval(()=>{if(tab==='home')tick()},1000);
+function fillForm(){const it=D[tab][ed];if(!it)return;
+if(tab==='guests'){$('#f_name').value=it.name;$('#g_side').value=it.side;$('#f_remark').value=it.remark||'';toggleRem();$('#f_phone').value=it.phone||'';$('#f_addr').value=it.addr||'';$('#g_sent').checked=!!it.sent;GEV.forEach(e=>{const v=it.inv[e];$('#g_on_'+e).checked=!!v;$('#g_n_'+e).value=v?v.n:1})}
+else S[tab].f.forEach(f=>{const el=$('#f_'+f.k);if(!el)return;if(f.t==='bool')el.checked=!!it[f.k];else el.value=it[f.k]??''});
+const fm=$('.form');if(fm)fm.scrollIntoView({behavior:'smooth',block:'center'})}
+function render(){nav();$('#app').innerHTML=tab==='home'?home():list(tab);if(showForm&&ed!==null)fillForm();if(tab==='home')tick();
+$('#n1').value=D.a;$('#n2').value=D.b;$('#dt').value=D.date;$('#cur').value=D.cur}
+document.addEventListener('click',e=>{const t=e.target,d=t.dataset;if(d.revokeEmail)return revokeEditor(d.revokeEmail);if(!CAN_EDIT&&(d.edit||d.del||d.mv||d.bulk||('save' in d)||('add' in d)||d.sorttime||('cancel' in d)||d.rmf!==undefined))return;
+if(d.tab){tab=d.tab;flt=tab==='itin'?'Roce':'All';sf='All';showForm=false;ed=null}
+else if(d.edit){tab=d.edit;ed=+d.i;showForm=true;if(tab==='itin')flt=EV.Roce.includes(D.itin[ed].ev)?'Roce':'Wedding'}
+else if('cancel' in d){showForm=false;ed=null}
+else if(d.mv){move(d.mv,+d.i,+d.dir);save()}
+else if(d.bulk){const A=D.guests,SS=A.filter(g=>selG.has(g));if(!SS.length)return;
+if(d.bulk==='del'){if(!confirm('Delete '+SS.length+' selected invites?'))return;D.guests=A.filter(g=>!selG.has(g));selG.clear()}
+else if(d.bulk==='sent'||d.bulk==='unsent')SS.forEach(g=>g.sent=d.bulk==='sent');
+else{const idx=A.map((g,k)=>k).filter(k=>gIn(A[k])&&(sf==='All'||A[k].side===sf)),V=idx.map(k=>A[k]),n=V.length,sw=(a,b)=>{[V[a],V[b]]=[V[b],V[a]]};
+if(d.bulk==='up'){for(let j=1;j<n;j++)if(selG.has(V[j])&&!selG.has(V[j-1]))sw(j,j-1)}else{for(let j=n-2;j>=0;j--)if(selG.has(V[j])&&!selG.has(V[j+1]))sw(j,j+1)}
+idx.forEach((k,j)=>A[k]=V[j])}
+save()}
+else if('sorttime' in d){D.itin.sort((a,b)=>a.time.localeCompare(b.time));save()}
+else if(d.rmf!==undefined){if(!confirm('Remove this attachment?'))return;const f=D.vendors[+d.rmf].files.splice(+d.j,1)[0];try{AS&&AS.delete(f.id)}catch(x){}save()}
+else if(d.flt){flt=d.flt;showForm=false;ed=null}
+else if(d.sf)sf=d.sf;
+else if('add' in d){showForm=!showForm;ed=null}
+else if(d.del){if(!confirm('Delete this entry?'))return;D[d.del].splice(+d.i,1);save()}
+else if('save' in d){let o={};
+if(tab==='guests'){o={name:$('#f_name').value,side:$('#g_side').value,remark:$('#g_side').value==='Mutual'?$('#f_remark').value.trim():'',phone:$('#f_phone').value,addr:$('#f_addr').value,sent:$('#g_sent').checked,inv:{}};GEV.forEach(e=>{if($('#g_on_'+e).checked)o.inv[e]={rsvp:(ed!==null&&D.guests[ed].inv[e]?D.guests[ed].inv[e].rsvp:'Pending'),n:Math.max(1,+$('#g_n_'+e).value||1)}});if(!Object.keys(o.inv).length)return alert('Tick at least one event.')}
+else S[tab].f.forEach(f=>o[f.k]=f.t==='bool'?$('#f_'+f.k).checked:f.t==='num'?(+$('#f_'+f.k).value||0):$('#f_'+f.k).value);
+if(!String(o[S[tab].f[0]?.k||'name']||'').trim())return alert('Please fill in the first field.');
+if(tab==='items')o.status=o.status||'Needed';if(tab==='vendors'){const old=ed!==null?D.vendors[ed]:{};if(o.settled){o.settledOn=old.settledOn||new Date().toISOString().slice(0,10);o.paid=o.total}else o.settledOn=''}if(ed!==null)D[tab][ed]={...D[tab][ed],...o};else D[tab].push(o);showForm=false;ed=null;save()}
+else return;render()});
+document.addEventListener('change',e=>{const t=e.target,d=t.dataset;if(!CAN_EDIT&&(d.sec||d.g||d.evd||d.up!==undefined||d.gs!==undefined||t.id==='selall'||t.id==='g_side'||t.id==='xl'))return;
+if(d.gs!==undefined){const g=D.guests[+d.gs];t.checked?selG.add(g):selG.delete(g);render();return}
+if(t.id==='selall'){D.guests.filter(g=>gIn(g)&&(sf==='All'||g.side===sf)).forEach(g=>t.checked?selG.add(g):selG.delete(g));render();return}
+if(t.id==='g_side'){toggleRem();return}
+if(t.id==='xl'){importXL(t.files[0]);t.value='';return}
+if(d.up!==undefined){upload(+d.up,[...t.files]);t.value='';return}
+if(d.g!==undefined){D.guests[+d.g].inv[d.e][d.r?'rsvp':'n']=t.value;save();render()}
+else if(d.evd){(D.evd[d.evd]=D.evd[d.evd]||{})[d.k]=t.value;save()}
+else if(d.sec){D[d.sec][+d.i][d.k]=t.type==='checkbox'?t.checked:t.value;if(d.sec==='vendors'&&d.k==='settled'){const v=D.vendors[+d.i];if(v.settled){v.settledOn=v.settledOn||new Date().toISOString().slice(0,10);v.paid=v.total}else v.settledOn=''}save();render()}});
+[['n1','a'],['n2','b'],['dt','date'],['cur','cur']].forEach(([id,k])=>$('#'+id).addEventListener('input',e=>{if(!CAN_EDIT)return;D[k]=e.target.value;save();if(tab==='home')render()}));
+render();
+document.addEventListener('focusout',()=>{if(pend&&!showForm){pend=false;render()}});
+(async()=>{if(!SUPABASE_READY()){$('#setupNote').style.display='block';$('#setupNote').textContent='Setup needed: create a Supabase project and paste its Project URL + Publishable/anon key into index.html. Until then this planner remains local-only.';updateAuthUI();return}SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);SB.auth.onAuthStateChange(async()=>{await refreshAccess()});await refreshAccess();await loadShared();await subscribeShared();render()})();
+$('#authBtn').addEventListener('click',()=>SESSION?signOut():showAuth(true));$('#closeAuth').addEventListener('click',()=>showAuth(false));$('#signInBtn').addEventListener('click',signIn);$('#signUpBtn').addEventListener('click',signUp);$('#authModal').addEventListener('click',e=>{if(e.target.id==='authModal')showAuth(false)});$('#accessBtn').addEventListener('click',()=>showAccess(true));$('#closeAccess').addEventListener('click',()=>showAccess(false));$('#grantBtn').addEventListener('click',grantEditor);$('#accessModal').addEventListener('click',e=>{if(e.target.id==='accessModal')showAccess(false)});
+</script>
+<div id="authModal" class="authmodal"><div class="authbox"><h3>Planner access</h3><p id="authHint">Sign in with an approved editor account to make shared changes.</p><label>Email<input id="authEmail" type="email" autocomplete="username" placeholder="you@example.com"></label><label>Password<input id="authPassword" type="password" autocomplete="current-password" placeholder="••••••••"></label><div class="authactions"><button id="signInBtn" class="authbtn primary">Sign in</button><button id="signUpBtn" class="authbtn">Create account</button><button id="closeAuth" class="authbtn">Close</button></div><div id="authMsg" class="sub" style="margin-top:10px"></div></div></div>
+<div id="accessModal" class="authmodal"><div class="authbox"><h3>Manage editor access</h3><p>Add an email address to allow that Supabase account to edit the shared planner.</p><label>Email to grant<input id="grantEmail" type="email" placeholder="editor@example.com"></label><div class="authactions"><button id="grantBtn" class="authbtn primary">Grant edit access</button><button id="closeAccess" class="authbtn">Close</button></div><div id="accessMsg" class="sub" style="margin-top:10px"></div><div id="accessList" class="accesslist"></div></div></div>
+</body></html>
