@@ -349,17 +349,258 @@ const mv=(sec,i)=>`<button class="x mv" data-mv="${sec}" data-i="${i}" data-dir=
 const att=(v,i)=>{const fs=v.files||[];return `<div class="meta" style="margin-top:10px">${fs.map((f,j)=>`<span class="att"><a href="/_blob/${f.id}" target="_blank" rel="noopener" title="${esc(f.name)}">${f.pdf?'📄':`<img src="/_blob/${f.id}" alt="">`}</a><button class="x" data-rmf="${i}" data-j="${j}" title="Remove">×</button></span>`).join('')}<label class="chip" style="border-color:var(--gold);color:var(--gold)">📎 ${fs.length?'Add more':'Attach invoice / receipt'}<input type="file" hidden multiple accept="image/*,application/pdf" data-up="${i}"></label>${fs.length?`<span class="sub">${fs.length} attached</span>`:''}</div>`};
 async function upload(i,fl){if(!CAN_EDIT)return alert('Sign in with editor access to upload files.');return alert('Receipt attachments will be enabled in the storage step after the shared database is connected.');}
 function move(sec,i,dir){const A=D[sec],c=A[i],idx=A.map((x,k)=>k).filter(k=>sec==='itin'?A[k].ev===c.ev:sec==='guests'?(gIn(A[k])&&(sf==='All'||A[k].side===sf)):inEv(A[k])),q=idx[idx.indexOf(i)+dir];if(q===undefined)return;[A[i],A[q]]=[A[q],A[i]];save()}
-async function importXL(f){if(!f)return;if(typeof XLSX==='undefined')return alert('Excel reader could not load.');
-try{const wb=XLSX.read(await f.arrayBuffer()),rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''}),out=[];
-rows.forEach(r=>{const o={};Object.keys(r).forEach(k=>o[k.toLowerCase().trim()]=r[k]);
-const name=String(o.name||o['guest name']||o.family||'').trim();if(!name)return;
-const def=Math.max(1,parseInt(o.guests||o['no. of guests']||o.count)||1),sd=String(o.side||'').toLowerCase();
-const side=SIDES.find(x=>sd&&sd.startsWith(x.slice(0,3).toLowerCase()))||'Mutual';
-const cols={Roce:o.roce,Wedding:o.wedding??o.church??o.nuptials??o.reception??o.hall},has=Object.values(cols).some(v=>v!==undefined),inv={};
-GEV.forEach(e=>{let v=has?cols[e]:'y';v=String(v??'').trim().toLowerCase();if(!v||['0','no','n','-'].includes(v))return;inv[e]={rsvp:RS.find(x=>x.toLowerCase()===String(o.rsvp||'').toLowerCase())||'Pending',n:parseInt(v)||def}});
-if(Object.keys(inv).length)out.push({name,side,phone:String(o.phone||o.mobile||''),addr:String(o.address||''),sent:/^(y|yes|true|1|sent|✓)/i.test(String(o.sent||o['invitation sent']||'')),remark:side==='Mutual'?String(o.remark||o.remarks||''):'',inv})});
-if(!out.length)return alert('No guests found. Use columns: Name, Side, Phone, Address, Roce, Wedding, Guests.');
-if(!confirm('Import '+out.length+' invites?'))return;D.guests.push(...out);save();render()}catch(e){alert('Could not read that file.')}}
+async function importXL(f){
+  if(!f)return;
+
+  if(typeof XLSX==='undefined'){
+    return alert('Excel reader could not load.');
+  }
+
+  try{
+    const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});
+    const out=[];
+
+    /*
+      Read ALL worksheets in the Excel workbook.
+      Each worksheet can contain guest records.
+    */
+    wb.SheetNames.forEach(sheetName=>{
+      const ws=wb.Sheets[sheetName];
+      if(!ws)return;
+
+      const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+
+      rows.forEach(r=>{
+        const o={};
+
+        Object.keys(r).forEach(k=>{
+          const key=String(k)
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g,' ');
+
+          o[key]=r[k];
+        });
+
+        /*
+          Guest name
+        */
+        const name=String(
+          o.name ||
+          o['guest name'] ||
+          o.guest ||
+          o.family ||
+          ''
+        ).trim();
+
+        if(!name)return;
+
+        /*
+          Number of guests
+        */
+        const guestValue=
+          o.guests ??
+          o['no. of guests'] ??
+          o['number of guests'] ??
+          o.count ??
+          o.qty ??
+          o.quantity ??
+          '';
+
+        const def=Math.max(
+          1,
+          parseInt(guestValue)||1
+        );
+
+        /*
+          Side
+        */
+        const sd=String(
+          o.side ||
+          o['guest side'] ||
+          ''
+        ).trim().toLowerCase();
+
+        const side=
+          SIDES.find(x=>
+            sd &&
+            sd.startsWith(
+              x.slice(0,3).toLowerCase()
+            )
+          ) || 'Mutual';
+
+        /*
+          Detect event columns.
+
+          Supported examples:
+          Roce
+          Wedding
+          Church
+          Nuptials
+          Reception
+          Hall
+        */
+        const cols={
+          Roce:o.roce,
+          Wedding:
+            o.wedding ??
+            o.church ??
+            o.nuptials ??
+            o.reception ??
+            o.hall
+        };
+
+        const hasExplicitEventColumns=
+          Object.values(cols).some(
+            v=>v!==undefined && String(v).trim()!==''
+          );
+
+        const inv={};
+
+        GEV.forEach(e=>{
+          let v;
+
+          if(hasExplicitEventColumns){
+            v=cols[e];
+          }else{
+            /*
+              If no Roce/Wedding columns exist,
+              put the guest into both events.
+            */
+            v='y';
+          }
+
+          v=String(v??'')
+            .trim()
+            .toLowerCase();
+
+          /*
+            Blank / No / N / 0 / - means
+            the guest is NOT invited to that event.
+          */
+          if(
+            !v ||
+            ['0','no','n','-','false'].includes(v)
+          ){
+            return;
+          }
+
+          /*
+            If the cell contains a number,
+            use that as the number attending.
+            Otherwise use the Guests column.
+          */
+          const eventGuests=
+            parseInt(v)||def;
+
+          /*
+            RSVP
+          */
+          const rsvpValue=String(
+            o.rsvp ||
+            o['rsvp status'] ||
+            o.status ||
+            ''
+          ).trim().toLowerCase();
+
+          const rsvp=
+            RS.find(x=>
+              x.toLowerCase()===rsvpValue
+            ) || 'Pending';
+
+          inv[e]={
+            rsvp,
+            n:eventGuests
+          };
+        });
+
+        /*
+          Only add the guest if at least one
+          event was identified.
+        */
+        if(Object.keys(inv).length){
+
+          out.push({
+            name,
+
+            side,
+
+            phone:String(
+              o.phone ||
+              o.mobile ||
+              o['phone number'] ||
+              o['mobile number'] ||
+              ''
+            ),
+
+            addr:String(
+              o.address ||
+              o.addr ||
+              ''
+            ),
+
+            sent:/^(y|yes|true|1|sent|✓)/i.test(
+              String(
+                o.sent ||
+                o['invitation sent'] ||
+                o['invite sent'] ||
+                o['invitation'] ||
+                ''
+              )
+            ),
+
+            remark:String(
+              o.remark ||
+              o.remarks ||
+              o.notes ||
+              ''
+            ),
+
+            inv
+          });
+        }
+      });
+    });
+
+    /*
+      Nothing found
+    */
+    if(!out.length){
+      return alert(
+        'No guests found.\n\n' +
+        'Use columns such as:\n' +
+        'Name, Side, Phone, Address, Roce, Wedding, Guests, RSVP, Sent, Remark.'
+      );
+    }
+
+    /*
+      Show confirmation before importing
+    */
+    if(!confirm(
+      'Found '+out.length+
+      ' guest records across '+
+      wb.SheetNames.length+
+      ' worksheet(s).\n\nImport them?'
+    )){
+      return;
+    }
+
+    /*
+      Add imported guests to existing data
+    */
+    D.guests.push(...out);
+
+    save();
+    render();
+
+  }catch(e){
+    console.error('Excel import error:',e);
+    alert(
+      'Could not read that Excel file.\n\n' +
+      'Please make sure it is a valid .xlsx or .xls file.'
+    );
+  }
+}
 const stat=t=>{const s=$('#sync');if(s)s.textContent=t};
 let tab='home',flt='All',sf='All',showForm=false,ed=null,guestSearch='',guestStatusFilter='all';const selG=new Set();
 const m=n=>D.cur+Number(n||0).toLocaleString(),grp=()=>flt==='All'?null:EV[flt];
