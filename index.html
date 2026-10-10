@@ -723,6 +723,27 @@ function guests(items){let h=gOver()+`<div class="chips"><label class="chip">⬆
 if(showForm)h+=`<div class="form">${inp(txt('name','Name / Family'))}<label>Side<select id="g_side">${SIDES.map(s=>`<option>${s}</option>`).join('')}</select></label><label id="g_rem_w" style="display:none">Remark (for Mutual)<input id="f_remark" placeholder="e.g. Family friend, colleague, neighbour"></label>${inp(txt('phone','Phone'))}<label class="full">Address<textarea id="f_addr" rows="2"></textarea></label><div class="full" style="color:var(--mut);font-size:12px">Invited to · number of guests</div>${GEV.map(e=>`<label class="row"><input type="checkbox" id="g_on_${e}" ${flt===e?'checked':''}> ${L[e]} <input type="number" id="g_n_${e}" value="1" min="1"></label>`).join('')}<label class="row full"><input type="checkbox" id="g_sent"> ✉ Invitation sent</label><button class="add full" data-save>${ed!==null?'✓ Update guest':'Save guest'}</button>${ed!==null?'<button class="chip full" data-cancel>Cancel</button>':''}</div>`;
 items=items.filter(x=>sf==='All'||x.it.side===sf);
 
+const sideInviteCount = items.length;
+
+const sideExpected = items.reduce((total, {it}) => {
+  const counts = GEV
+    .filter(ev => it.inv[ev] && (flt === 'All' || flt === ev))
+    .filter(ev => it.inv[ev].rsvp !== 'Declined')
+    .map(ev => +it.inv[ev].n || 0);
+
+  return total + Math.max(0, ...counts);
+}, 0);
+
+h += `<div class="grid">
+  <div class="stat">
+    <b>${sideInviteCount}</b>
+    <span>${sf === 'All' ? 'All sides' : sf} · Invitations</span>
+  </div>
+  <div class="stat">
+    <b>${sideExpected}</b>
+    <span>Expected guests</span>
+  </div>
+</div>`;
 if(guestStatusFilter==='sent'){
   items=items.filter(x=>x.it.sent);
 }else if(guestStatusFilter==='pending'){
