@@ -53,7 +53,6 @@ nav button.on,.chip.on{background:var(--gold);color:#111;border-color:var(--gold
 h2{font:700 26px Cormorant Garamond,Georgia,serif;color:var(--gold);margin:18px 0 4px}
 h4{margin:14px 0 4px;color:var(--ink);font:600 15px Inter}
 .cur{width:54px!important;text-align:center}
-
 body{background:radial-gradient(800px 480px at 8% -8%,#3b2a0f,transparent 60%),radial-gradient(700px 500px at 100% 5%,#2b0f1f,transparent 55%),#06060a;background-attachment:fixed}
 h1{font-size:44px;background:linear-gradient(90deg,#f7e7bd,#d4af6a,#b07a3a);-webkit-background-clip:text;background-clip:text;color:transparent}
 .card,.stat,.ev,.form,.bx{background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(10px);box-shadow:0 10px 30px rgba(0,0,0,.4)}
@@ -329,7 +328,7 @@ const SIDES=["Dad's","Mom's","Steeve's","Shaun's","Sandriya's","Mutual"],RS=['Pe
 const sel=(k,l,o,e)=>({k,l,t:'sel',o,e}),txt=(k,l)=>({k,l,t:'text'}),num=(k,l,e)=>({k,l,t:'num',e});
 const S={
 guests:{t:'Guests & RSVP',f:[]}, itin:{t:'Itinerary',f:[   sel('ev','Event',EVO),   txt('time','Time'),   txt('activity','Activity'),   {k:'description',l:'Description',t:'area'} ]},
-menu:{t:'Catering Menu',f:[txt('dish','Dish / Item'),sel('ev','Event',ALL),sel('course','Course',['Welcome drink','Starter','Main – Non-veg','Main – Veg','Rice / Bread','Dessert','Beverage','Other']),txt('qty','Qty / servings'),txt('note','Notes')]},
+menu:{t:'Catering Menu',f:[txt('dish','Dish / Item'),sel('ev','Event',['Roce','Wedding']),sel('course','Category',['Welcome Drink','Starters','Cake & Wine','Main Course - Veg','Main Course - Non-Veg','Dessert']),num('qty','Quantity'),sel('unit','Unit',['Servings','Pieces','Bottles','Trays','kg','L','Packets','Boxes','Other']),{k:'description',l:'Description / notes',t:'area'}]},
 vendors:{t:'Vendors & Payments',f:[txt('name','Vendor / Person'),sel('role','Role',['Caterer','MC / Emcee','Choir','Church / Parish','Hall / Venue','Band / DJ','Photo / Video','Decor / Flowers','Bridal wear','Makeup & Hair','Cake','Transport','Invitations','Other']),sel('ev','Event',EVO),txt('phone','Phone'),num('total','Total agreed'),num('paid','Advance / paid so far',1),{k:'due',l:'Balance due on',t:'date'},{k:'settled',l:'✔ Full payment done',t:'bool'}]},
 items:{t:'Items Needed',f:[txt('item','Item'),sel('ev','Event',EVO),txt('qty','Qty'),txt('who','Responsible'),sel('status','Status',['Needed','Ordered','Bought','Packed'],1)]},
 todo:{t:'To-Do',f:[txt('task','Task'),sel('ev','Event',EVO),{k:'due',l:'Due',t:'date'},{k:'done',l:'Done',t:'bool'}]},
@@ -602,7 +601,7 @@ async function importXL(f){
   }
 }
 const stat=t=>{const s=$('#sync');if(s)s.textContent=t};
-let tab='home',flt='All',sf='All',showForm=false,ed=null,guestSearch='',guestStatusFilter='all';const selG=new Set();
+let tab='home',flt='All',sf='All',showForm=false,ed=null,guestSearch='',guestStatusFilter='all',menuPreset={ev:'Roce',course:'Welcome Drink'};const selG=new Set();
 const m=n=>D.cur+Number(n||0).toLocaleString(),grp=()=>flt==='All'?null:EV[flt];
 const inEv=it=>!grp()||grp().includes(it.ev);
 const GEV=['Roce','Wedding'],gk=e=>e==='Roce'?'Roce':'Wedding',gIn=g=>flt==='All'||!!g.inv[flt];L.Wedding='Wedding (Nuptials + Reception)';
@@ -794,7 +793,7 @@ return h+items.map(({it,i})=>`<div class="card"><div class="top"><div style="dis
 <div class="meta"><span class="tag gold">${it.side==='Mutual'&&it.remark?'Mutual – '+esc(it.remark):it.side+' side'}</span>${it.phone?`<span class="tag">${esc(it.phone)}</span>`:''}<label class="tag" style="cursor:pointer"><input type="checkbox" data-sec="guests" data-i="${i}" data-k="sent" ${it.sent?'checked':''}> ✉ Invitation sent</label></div>
 ${GEV.filter(e=>it.inv[e]&&(flt==='All'||flt===e)).map(e=>`<div class="meta"><b style="min-width:120px">${L[e]}</b><select data-g="${i}" data-e="${e}" data-r="1">${RS.map(r=>`<option ${r===it.inv[e].rsvp?'selected':''}>${r}</option>`).join('')}</select><input type="number" min="1" data-g="${i}" data-e="${e}" value="${it.inv[e].n}"> guests</div>`).join('')}</div>`).join('')}
 function evd(){return grp().map(e=>{const d=D.evd[e]||{};return `<div class="ev"><h3>${L[e]} – details</h3><div class="form" style="border:0;padding:0;margin:6px 0 0">${[['date','Date','date'],['time','Start time','time'],['venue','Venue','text'],['addr','Address','text'],['contact','Contact person','text']].map(([k,l,t])=>`<label>${l}<input type="${t}" data-evd="${e}" data-k="${k}" value="${esc(d[k]||'')}"></label>`).join('')}<label class="full">Notes (dress code, parking…)<textarea rows="2" data-evd="${e}" data-k="notes">${esc(d.notes||'')}</textarea></label></div></div>`}).join('')}
-function list(sec){const s=S[sec];let items=D[sec].map((it,i)=>({it,i}));
+const MENU_CATEGORIES={   Roce:['Welcome Drink','Starters','Main Course - Veg','Main Course - Non-Veg','Dessert'],   Wedding:['Welcome Drink','Cake & Wine','Main Course - Veg','Main Course - Non-Veg','Dessert'] };  const menuEvent=it=>   ['Nuptials','Reception','General'].includes(it.ev)     ? 'Wedding'     : (it.ev||'Roce');  const menuCategory=it=>{   const c=String(it.course||'');   const map={     'Welcome drink':'Welcome Drink',     'Starter':'Starters',     'Main – Veg':'Main Course - Veg',     'Main - Veg':'Main Course - Veg',     'Main – Non-veg':'Main Course - Non-Veg',     'Main - Non-veg':'Main Course - Non-Veg',     'Rice / Bread':'Main Course - Veg',     'Beverage':'Welcome Drink',     'Dessert':'Dessert'   };   return map[c]||c; };  function menuList(){   let h='<h2>Catering Menu</h2><div class="chips">'+     '<span class="tag gold">Roce + Wedding</span>'+     '<span style="flex:1"></span>'+     '<button class="add" data-add>＋ Add Item</button></div>';    if(showForm){     h+='<div class="form">'+S.menu.f.map(x=>inp(x,'menu')).join('')+       '<button class="add full" data-save>'+       (ed!==null?'✓ Update Item':'Save Item')+       '</button>'+       (ed!==null?'<button class="chip full" data-cancel>Cancel</button>':'')+       '</div>';   }    let total=0;    ['Roce','Wedding'].forEach(ev=>{     const evItems=D.menu.filter(it=>menuEvent(it)===ev);      h+='<section style="margin-top:22px">'+       '<div class="top" style="align-items:center">'+       '<div><div class="eyebrow">'+ev+'</div>'+       '<h2 style="margin:2px 0 8px">'+ev+' Menu</h2></div>'+       '<span class="tag">'+evItems.length+' items</span></div>';      MENU_CATEGORIES[ev].forEach(cat=>{       const items=D.menu.map((it,i)=>({it,i}))         .filter(({it})=>           menuEvent(it)===ev && menuCategory(it)===cat         );        total+=items.length;        h+='<div class="card" style="padding:14px;margin:10px 0 14px">'+         '<div class="top" style="align-items:center">'+         '<h4 style="margin:0;color:var(--gold)">'+esc(cat)+'</h4>'+         '<button class="chip" data-menu-add="'+ev+'|'+cat+'">＋ Add item</button>'+         '</div>';        if(!items.length){         h+='<div class="sub" style="padding:12px 2px">No items yet.</div>';       }else{         items.forEach(({it,i})=>{           const qty=it.qty??it.quantity??'';           const unit=it.unit||'Servings';           const desc=it.description??it.note??'';           const canCopy=MENU_CATEGORIES[             ev==='Roce'?'Wedding':'Roce'           ].includes(cat);            h+='<div class="card" style="margin:10px 0 0">'+             '<div class="top"><div style="min-width:0;flex:1">'+             '<div class="t">'+esc(it.dish||it.item||'Untitled item')+'</div>'+             '<div class="meta"><span class="tag gold">Qty: '+             esc(String(qty||'—'))+' '+esc(unit)+'</span></div>'+             (desc?'<div class="sub" style="white-space:pre-wrap;margin-top:7px">'+esc(desc)+'</div>':'')+             '</div><span style="white-space:nowrap">'+             '<button class="x" data-edit="menu" data-i="'+i+'" title="Edit">✎</button>'+             (canCopy?'<button class="x" data-menu-copy="'+i+'" title="Copy to other event">⧉</button>':'')+             '<button class="x" data-del="menu" data-i="'+i+'" title="Delete">×</button>'+             '</span></div></div>';         });       }        h+='</div>';     });      h+='</section>';   });    if(!total){     h+='<div class="empty">Add your first item using the buttons above.</div>';   }    return h; }  function list(sec){   const s=S[sec];   if(sec==='menu')return menuList();   let items=D[sec].map((it,i)=>({it,i}));
 if(sec==='guests')items=items.filter(x=>gIn(x.it));else items=items.filter(x=>inEv(x.it));
 if(sec==='itin')items.sort((a,b)=>ALL.indexOf(a.it.ev)-ALL.indexOf(b.it.ev));
 if(sec==='menu')items.sort((a,b)=>S.menu.f[2].o.indexOf(a.it.course)-S.menu.f[2].o.indexOf(b.it.course));
@@ -813,13 +812,33 @@ function tick(){document.querySelectorAll('[data-cd]').forEach(el=>{const t=wind
 setInterval(()=>{if(tab==='home')tick()},1000);
 function fillForm(){const it=D[tab][ed];if(!it)return;
 if(tab==='guests'){$('#f_name').value=it.name;$('#g_side').value=it.side;$('#f_remark').value=it.remark||'';toggleRem();$('#f_phone').value=it.phone||'';$('#f_addr').value=it.addr||'';$('#g_sent').checked=!!it.sent;GEV.forEach(e=>{const v=it.inv[e];$('#g_on_'+e).checked=!!v;$('#g_n_'+e).value=v?v.n:1})}
-else S[tab].f.forEach(f=>{const el=$('#f_'+f.k);if(!el)return;if(f.t==='bool')el.checked=!!it[f.k];else el.value=it[f.k]??''});
+else S[tab].f.forEach(f=>{   const el=$('#f_'+f.k);   if(!el)return;    if(f.t==='bool'){     el.checked=!!it[f.k];   }else if(tab==='menu'&&f.k==='ev'){     el.value=menuEvent(it);   }else if(tab==='menu'&&f.k==='course'){     el.value=menuCategory(it);   }else if(tab==='menu'&&f.k==='qty'){     el.value=it.qty??it.quantity??'';   }else if(tab==='menu'&&f.k==='description'){     el.value=it.description??it.note??'';   }else{     el.value=it[f.k]??'';   } });
 const fm=$('.form');if(fm)fm.scrollIntoView({behavior:'smooth',block:'center'})}
-function render(){nav();$('#app').innerHTML=tab==='home'?home():list(tab);if(showForm&&ed!==null)fillForm();if(tab==='home')tick();
-$('#n1').value=D.a;$('#n2').value=D.b;$('#dt').value=D.date;$('#cur').value=D.cur}
-document.addEventListener('click',e=>{const t=e.target,d=t.dataset;if(d.userRole){   const role=d.role;   SB.functions.invoke('manage-planner-users',{     body:{action:'set_role',id:d.userRole,role}   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }  if(d.userActive){   SB.functions.invoke('manage-planner-users',{     body:{       action:'set_active',       id:d.userActive,       active:d.active==='1'     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }  if(d.resetUser){   const p=prompt('Enter a new password (at least 8 characters):');   if(p===null)return;   if(p.length<8){     setAccessMsg('Password must be at least 8 characters.');     return;   }    SB.functions.invoke('manage-planner-users',{     body:{       action:'reset_password',       id:d.resetUser,       password:p     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     setAccessMsg('Password reset successfully.');   });   return; }  if(d.deleteUser){   if(!confirm('Delete this planner user permanently?'))return;    SB.functions.invoke('manage-planner-users',{     body:{       action:'delete',       id:d.deleteUser     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }if(!CAN_EDIT&&(d.edit||d.del||d.mv||d.bulk||('save' in d)||('add' in d)||d.sorttime||('cancel' in d)||d.rmf!==undefined))return;
+
+function render(){
+  nav();
+  $('#app').innerHTML=tab==='home'?home():list(tab);
+
+  if(showForm&&ed!==null)fillForm();
+
+  if(showForm&&tab==='menu'&&ed===null){
+    const ev=$('#f_ev');
+    const course=$('#f_course');
+
+    if(ev)ev.value=menuPreset.ev;
+    if(course)course.value=menuPreset.course;
+  }
+
+  if(tab==='home')tick();
+
+  $('#n1').value=D.a;
+  $('#n2').value=D.b;
+  $('#dt').value=D.date;
+  $('#cur').value=D.cur;
+}
+document.addEventListener('click',e=>{const t=e.target,d=t.dataset;if(d.userRole){   const role=d.role;   SB.functions.invoke('manage-planner-users',{     body:{action:'set_role',id:d.userRole,role}   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }  if(d.userActive){   SB.functions.invoke('manage-planner-users',{     body:{       action:'set_active',       id:d.userActive,       active:d.active==='1'     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }  if(d.resetUser){   const p=prompt('Enter a new password (at least 8 characters):');   if(p===null)return;   if(p.length<8){     setAccessMsg('Password must be at least 8 characters.');     return;   }    SB.functions.invoke('manage-planner-users',{     body:{       action:'reset_password',       id:d.resetUser,       password:p     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     setAccessMsg('Password reset successfully.');   });   return; }  if(d.deleteUser){   if(!confirm('Delete this planner user permanently?'))return;    SB.functions.invoke('manage-planner-users',{     body:{       action:'delete',       id:d.deleteUser     }   }).then(({data,error})=>{     if(error){       setAccessMsg(data?.error||error.message);       return;     }     loadEditors();   });   return; }if(!CAN_EDIT&&(d.edit||d.del||d.mv||d.bulk||d.menuAdd||d.menuCopy!==undefined||('save' in d)||('add' in d)||d.sorttime||('cancel' in d)||d.rmf!==undefined))return;
 if(d.guestFilter){   tab='guests';   guestStatusFilter=d.guestFilter;   guestSearch='';   selG.clear();   showForm=false;   ed=null;   sf='All';   flt='All';   render();   return; }  if(d.tab){   tab=d.tab;   flt=tab==='itin'?'Roce':'All';   sf='All';    if(tab==='guests'){     guestStatusFilter='all';     guestSearch='';     selG.clear();   }    showForm=false;   ed=null; }
-else if(d.edit){tab=d.edit;ed=+d.i;showForm=true;if(tab==='itin')flt=EV.Roce.includes(D.itin[ed].ev)?'Roce':'Wedding'}
+else if(d.menuAdd){   const p=d.menuAdd.split('|');   tab='menu';   ed=null;   showForm=true;   menuPreset={ev:p[0],course:p[1]}; } else if(d.menuCopy!==undefined){   const source=D.menu[+d.menuCopy];    if(source){     const from=menuEvent(source);     const to=from==='Roce'?'Wedding':'Roce';     const cat=menuCategory(source);      if(!MENU_CATEGORIES[to].includes(cat)){       alert('This category is only available for '+from+'.');       return;     }      if(!confirm('Copy "'+(source.dish||'this item')+       '" to '+to+'? Quantities will be independent.'))return;      D.menu.push({       dish:source.dish||'',       ev:to,       course:cat,       qty:source.qty??source.quantity??'',       unit:source.unit||'Servings',       description:source.description??source.note??''     });      save();   } } else if(d.edit){   tab=d.edit;   ed=+d.i;   showForm=true;    if(tab==='itin'){     flt=EV.Roce.includes(D.itin[ed].ev)?'Roce':'Wedding';   }    if(tab==='menu')menuPreset=null; }
 else if('cancel' in d){showForm=false;ed=null}
 else if(d.mv){move(d.mv,+d.i,+d.dir);save()}
 else if(d.bulk){const A=D.guests,SS=A.filter(g=>selG.has(g));if(!SS.length)return;
@@ -833,13 +852,14 @@ else if('sorttime' in d){D.itin.sort((a,b)=>a.time.localeCompare(b.time));save()
 else if(d.rmf!==undefined){if(!confirm('Remove this attachment?'))return;const f=D.vendors[+d.rmf].files.splice(+d.j,1)[0];try{AS&&AS.delete(f.id)}catch(x){}save()}
 else if(d.flt){flt=d.flt;showForm=false;ed=null}
 else if(d.sf)sf=d.sf;
-else if('add' in d){showForm=!showForm;ed=null}
+else if('add' in d){   showForm=!showForm;   ed=null;   if(tab==='menu')menuPreset={ev:'Roce',course:'Welcome Drink'}; }
 else if(d.del){if(!confirm('Delete this entry?'))return;D[d.del].splice(+d.i,1);save()}
 else if('save' in d){let o={};
 if(tab==='guests'){o={name:$('#f_name').value,side:$('#g_side').value,remark:$('#g_side').value==='Mutual'?$('#f_remark').value.trim():'',phone:$('#f_phone').value,addr:$('#f_addr').value,sent:$('#g_sent').checked,inv:{}};GEV.forEach(e=>{if($('#g_on_'+e).checked)o.inv[e]={rsvp:(ed!==null&&D.guests[ed].inv[e]?D.guests[ed].inv[e].rsvp:'Pending'),n:Math.max(1,+$('#g_n_'+e).value||1)}});if(!Object.keys(o.inv).length)return alert('Tick at least one event.')}
 else S[tab].f.forEach(f=>o[f.k]=f.t==='bool'?$('#f_'+f.k).checked:f.t==='num'?(+$('#f_'+f.k).value||0):$('#f_'+f.k).value);
+if(tab==='menu'&&!MENU_CATEGORIES[o.ev]?.includes(o.course))return alert('Choose a category that belongs to the selected event.');
 if(!String(o[S[tab].f[0]?.k||'name']||'').trim())return alert('Please fill in the first field.');
-if(tab==='items')o.status=o.status||'Needed';if(tab==='vendors'){const old=ed!==null?D.vendors[ed]:{};if(o.settled){o.settledOn=old.settledOn||new Date().toISOString().slice(0,10);o.paid=o.total}else o.settledOn=''}if(ed!==null)D[tab][ed]={...D[tab][ed],...o};else D[tab].push(o);showForm=false;ed=null;save()}
+if(tab==='items')o.status=o.status||'Needed';if(tab==='vendors'){const old=ed!==null?D.vendors[ed]:{};if(o.settled){o.settledOn=old.settledOn||new Date().toISOString().slice(0,10);o.paid=o.total}else o.settledOn=''}if(ed!==null)D[tab][ed]={...D[tab][ed],...o};else D[tab].push(o);showForm=false;ed=null;menuPreset={ev:'Roce',course:'Welcome Drink'};save()}
 else return;render()});
 document.addEventListener('change',e=>{const t=e.target,d=t.dataset;if(!CAN_EDIT&&(d.sec||d.g||d.evd||d.up!==undefined||d.gs!==undefined||t.id==='selall'||t.id==='g_side'||t.id==='xl'))return;
 if(d.gs!==undefined){const g=D.guests[+d.gs];t.checked?selG.add(g):selG.delete(g);render();return}
